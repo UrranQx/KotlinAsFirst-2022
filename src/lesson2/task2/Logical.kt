@@ -59,4 +59,4 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = ((kotlin.math.min(c, kotlin.math.min(a, b)) <= kotlin.math.min(r, s)) && ((a+b+c - kotlin.math.min(c, kotlin.math.min(a, b)) - kotlin.math.max(a,kotlin.math.max(b,c))) <= kotlin.math.max(r,s)))
