@@ -68,7 +68,16 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    var ans = "$age "
+    if (age % 100 in 5..20) return ans + "лет"
+    when (age % 10) {
+        1 -> ans += "год"
+        in 2..4 -> ans += "года"
+        else -> ans += "лет"
+    }
+    return ans
+}
 
 /**
  * Простая (2 балла)
@@ -81,7 +90,19 @@ fun timeForHalfWay(
     t1: Double, v1: Double,
     t2: Double, v2: Double,
     t3: Double, v3: Double
-): Double = TODO()
+): Double {
+    val s1 = t1 * v1
+    val s2 = t2 * v2
+    val s3 = t3 * v3
+    val s: Double = s1 + s2 + s3
+    val ans: Double
+    if (s / 2 <= s1) ans = (s / 2) / v1
+    else
+        if (s / 2 <= s1 + s2) ans = t1 + (s / 2 - s1) / v2
+        else ans = t1 + t2 + (s / 2 - s1 - s2) / v3
+    return ans
+}
+
 
 /**
  * Простая (2 балла)
@@ -96,7 +117,17 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = TODO()
+): Int {
+    fun rookCanShoot(
+        X1: Int, Y1: Int,
+        X2: Int = kingX, Y2: Int = kingY
+    ): Boolean = (X1 == X2 || Y1 == Y2)
+
+    var ans: Int = 0
+    if (rookCanShoot(rookX1, rookY1)) ans += 1
+    if (rookCanShoot(rookX2, rookY2)) ans += 2
+    return ans
+}
 
 /**
  * Простая (2 балла)
@@ -112,7 +143,22 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    fun bishopCanShoot(
+        X1: Int, Y1: Int,
+        X2: Int = kingX, Y2: Int = kingY
+    ): Boolean = ((X2 - X1) * (X2 - X1)) == ((Y2 - Y1) * (Y2 - Y1))
+
+    fun rookCanShoot(
+        X1: Int, Y1: Int,
+        X2: Int = kingX, Y2: Int = kingY
+    ): Boolean = (X1 == X2 || Y1 == Y2)
+
+    var ans: Int = 0
+    if (rookCanShoot(rookX, rookY)) ans += 1
+    if (bishopCanShoot(bishopX, bishopY)) ans += 2
+    return ans
+}
 
 /**
  * Простая (2 балла)
@@ -122,7 +168,16 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val hypo = max(a, max(b, c))
+    val side1 = kotlin.math.min(a, kotlin.math.min(b, c))
+    val side2 = a + b + c - hypo - side1
+    if (side1 + side2 < hypo) return -1
+    if (hypo * hypo < side1 * side1 + side2 * side2) return 0
+    if (hypo * hypo == side1 * side1 + side2 * side2) return 1
+    return 2
+}
+
 
 /**
  * Средняя (3 балла)
@@ -132,4 +187,12 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+
+    if ((d in a..b && c in a..b) || (a in c..d && b in c..d)) {
+        return kotlin.math.min(b - a, d - c)
+    }
+    if ((a < c && b in c..d)) return b - c
+    if ((a in c..d && b > d)) return d - a
+    return -1 //if ((b < c) || (a > d)) return -1
+}
