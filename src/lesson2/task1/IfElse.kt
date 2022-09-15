@@ -69,14 +69,12 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String {
-    var ans = "$age "
-    if (age % 100 in 5..20) return ans + "лет"
-    when (age % 10) {
-        1 -> ans += "год"
-        in 2..4 -> ans += "года"
-        else -> ans += "лет"
+    if (age % 100 in 5..20) return "$age лет"
+    return when (age % 10) {
+        1 -> "$age год"
+        in 2..4 -> "$age года"
+        else -> "$age лет"
     }
-    return ans
 }
 
 /**
@@ -94,7 +92,7 @@ fun timeForHalfWay(
     val s1 = t1 * v1
     val s2 = t2 * v2
     val s3 = t3 * v3
-    val s: Double = s1 + s2 + s3
+    val s = s1 + s2 + s3
     val ans: Double
     if (s / 2 <= s1) ans = (s / 2) / v1
     else
@@ -169,8 +167,8 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val hypo = max(a, max(b, c))
-    val side1 = kotlin.math.min(a, kotlin.math.min(b, c))
+    val hypo = maxOf(a, b, c)
+    val side1 = minOf(a, b, c)
     val side2 = a + b + c - hypo - side1
     if (side1 + side2 < hypo) return -1
     if (hypo * hypo < side1 * side1 + side2 * side2) return 0
@@ -194,5 +192,5 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     }
     if ((a < c && b in c..d)) return b - c
     if ((a in c..d && b > d)) return d - a
-    return -1 //if ((b < c) || (a > d)) return -1
+    return -1 //if ((b < c) || (a > d)) it'll return -1
 }

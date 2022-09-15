@@ -88,7 +88,7 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
-    // Solution // (min(a,b,c) <= min(r,s)) && mean(a,b,c) <= max(r,s)
-    ((kotlin.math.min(c, kotlin.math.min(a, b)) <= kotlin.math.min(r, s))
-            && ((a + b + c - kotlin.math.min(c, kotlin.math.min(a, b))
-            - kotlin.math.max(a, kotlin.math.max(b, c))) <= kotlin.math.max(r, s)))
+    // Solution // ((min(a,b,c) <= min(r,s)) && mean(a,b,c) <= max(r,s)
+    (minOf(a, b, c) <= minOf(r, s)) &&
+            ((a + b + c - maxOf(a, b, c) - minOf(a, b, c) <= maxOf(r, s)))
+
