@@ -4,6 +4,7 @@ package lesson3.task1
 
 import java.util.DoubleSummaryStatistics
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -77,7 +78,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var ans = 0
-    var temp = n
+    var temp = abs(n)
     while (temp > 0) {
         ans += 1
         temp /= 10
@@ -244,7 +245,17 @@ fun isPalindrome(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    val lenX = digitNumber(n)
+    fun digitNumberLong(n: Long): Long {
+        var ans = 0L
+        var temp = abs(n)
+        while (temp > 0) {
+            ans += 1
+            temp /= 10
+        }
+        return ans + if (n == 0L) 1 else 0
+    }
+
+    val lenX = digitNumberLong(n.toLong())
     var t = n
     var sumX = 0
     for (i in 1..lenX) {
