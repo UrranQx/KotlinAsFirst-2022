@@ -3,6 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
 import kotlin.math.max
 import kotlin.math.sqrt
 
@@ -93,12 +94,11 @@ fun timeForHalfWay(
     val s2 = t2 * v2
     val s3 = t3 * v3
     val s = s1 + s2 + s3
-    val ans: Double
-    if (s / 2 <= s1) ans = (s / 2) / v1
-    else
-        if (s / 2 <= s1 + s2) ans = t1 + (s / 2 - s1) / v2
-        else ans = t1 + t2 + (s / 2 - s1 - s2) / v3
-    return ans
+    return when {
+        (s / 2 <= s1) -> (s / 2) / v1
+        (s / 2 <= s1 + s2) -> t1 + (s / 2 - s1) / v2
+        else -> t1 + t2 + (s / 2 - s1 - s2) / v3
+    }
 }
 
 
@@ -111,19 +111,20 @@ fun timeForHalfWay(
  * и 3, если угроза от обеих ладей.
  * Считать, что ладьи не могут загораживать друг друга
  */
+fun bishopCanShoot(X1: Int, Y1: Int, X2: Int, Y2: Int): Boolean =
+    ((X2 - X1) * (X2 - X1)) == ((Y2 - Y1) * (Y2 - Y1))
+
+fun rookCanShoot(X1: Int, Y1: Int, X2: Int, Y2: Int): Boolean =
+    (X1 == X2 || Y1 == Y2)
+
 fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    fun rookCanShoot(
-        X1: Int, Y1: Int,
-        X2: Int = kingX, Y2: Int = kingY
-    ): Boolean = (X1 == X2 || Y1 == Y2)
-
     var ans: Int = 0
-    if (rookCanShoot(rookX1, rookY1)) ans += 1
-    if (rookCanShoot(rookX2, rookY2)) ans += 2
+    if (rookCanShoot(rookX1, rookY1, kingX, kingY)) ans += 1
+    if (rookCanShoot(rookX2, rookY2, kingX, kingY)) ans += 2
     return ans
 }
 
@@ -142,19 +143,11 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    fun bishopCanShoot(
-        X1: Int, Y1: Int,
-        X2: Int = kingX, Y2: Int = kingY
-    ): Boolean = ((X2 - X1) * (X2 - X1)) == ((Y2 - Y1) * (Y2 - Y1))
 
-    fun rookCanShoot(
-        X1: Int, Y1: Int,
-        X2: Int = kingX, Y2: Int = kingY
-    ): Boolean = (X1 == X2 || Y1 == Y2)
 
     var ans: Int = 0
-    if (rookCanShoot(rookX, rookY)) ans += 1
-    if (bishopCanShoot(bishopX, bishopY)) ans += 2
+    if (rookCanShoot(rookX, rookY, kingX, kingY)) ans += 1
+    if (bishopCanShoot(bishopX, bishopY, kingX, kingY)) ans += 2
     return ans
 }
 
@@ -170,7 +163,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val hypo = maxOf(a, b, c)
     val side1 = minOf(a, b, c)
     val side2 = a + b + c - hypo - side1
-    if (side1 + side2 < hypo) return -1
+    if (side1 + side2 <= hypo) return -1 //если side1+side2==hypo => треугольник вырождается в линию
     if (hypo * hypo < side1 * side1 + side2 * side2) return 0
     if (hypo * hypo == side1 * side1 + side2 * side2) return 1
     return 2
@@ -188,7 +181,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
 
     if ((d in a..b && c in a..b) || (a in c..d && b in c..d)) {
-        return kotlin.math.min(b - a, d - c)
+        return minOf(b - a, d - c)
     }
     if ((a < c && b in c..d)) return b - c
     if ((a in c..d && b > d)) return d - a
