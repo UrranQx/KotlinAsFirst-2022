@@ -19,8 +19,8 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean {
-    val sum34: Int = number % 10 + (number / 10) % 10
-    val sum12: Int = number / 1000 + (number / 100) % 10
+    val sum34 = number % 10 + (number / 10) % 10
+    val sum12 = number / 1000 + (number / 100) % 10
     return sum34 == sum12
 }
 
@@ -32,8 +32,8 @@ fun isNumberHappy(number: Int): Boolean {
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    val diagonal: Boolean = ((x2 - x1) * (x2 - x1)) == ((y2 - y1) * (y2 - y1))
-    val axis: Boolean = (x1 == x2 || y1 == y2)
+    val diagonal = ((x2 - x1) * (x2 - x1)) == ((y2 - y1) * (y2 - y1))
+    val axis = (x1 == x2 || y1 == y2)
     return (diagonal || axis)
 }
 
@@ -69,9 +69,8 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean {
-    fun vectorLen(vx: Double, vy: Double): Double {
-        return kotlin.math.sqrt(vx * vx + vy * vy)
-    }
+    fun vectorLen(vx: Double, vy: Double): Double =
+        kotlin.math.sqrt(vx * vx + vy * vy)
     // max len from x2 y2 is equal r2
     // len from x2 y2 is equal vectorLen(x1 - x2, y1 - y2)
     // plus r1
