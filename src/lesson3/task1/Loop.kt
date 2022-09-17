@@ -183,7 +183,7 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean = lcm(m, n) == m * n //Вот код, где матан помог
-/* А ниже код - написаенный в лоб
+/* А ниже код - написанный в лоб
 val minim = minOf(m, n)
 for (i in 2..minim) {
     if (n % i == 0 && m % i == 0) return false
@@ -275,7 +275,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var ans: Double = 0.0
+    var ans = 0.0
     val t = x % (PI * 2)
     var nextVal = t
     var k = 1
