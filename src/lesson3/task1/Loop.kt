@@ -260,9 +260,10 @@ fun hasDifferentDigits(n: Int): Boolean {
     var sumX = 0
     for (i in 1..lenX) {
         sumX += t % 10
+        if ((sumX.toDouble() / i) != (t % 10).toDouble()) return true
         t /= 10
     }
-    return (sumX.toDouble() / lenX) != (n % 10).toDouble()
+    return false
 }
 
 /**
