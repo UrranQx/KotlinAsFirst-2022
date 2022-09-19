@@ -99,7 +99,7 @@ fun fib(n: Int): Int {
     var prev2 = 1
     var ans = 1
     if (n <= 2) return ans
-    else for (i in 3..n) {
+    for (i in 3..n) {
         ans = prev1 + prev2
         prev2 = prev1
         prev1 = ans
@@ -280,7 +280,7 @@ fun sin(x: Double, eps: Double): Double {
     var nextVal = t
     var k = 1
     var i = 1
-    while (kotlin.math.abs(nextVal) >= eps) {
+    while (abs(nextVal) >= eps) {
         ans += nextVal
         i += 2
         k *= -1
@@ -299,12 +299,12 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {//= sin(x + PI / 2, eps)
-    var ans: Double = 0.0
+    var ans = 0.0
     val t = x % (PI * 2)
     var nextVal = 1.0
     var k = 1
     var i = 0
-    while (kotlin.math.abs(nextVal) >= eps) {
+    while (abs(nextVal) >= eps) {
         ans += nextVal
         i += 2
         k *= -1
@@ -331,7 +331,8 @@ fun squareSequenceDigit(n: Int): Int {
         count += digitNumber(x * x)
 
     }
-    val lx = count - n; ans = x * x
+    val lx = count - n
+    ans = x * x
     for (i in 1..lx) ans /= 10
     return ans % 10
 
@@ -355,7 +356,8 @@ fun fibSequenceDigit(n: Int): Int {
         count += digitNumber(fib(x))
 
     }
-    val lx = count - n; ans = fib(x)
+    val lx = count - n
+    ans = fib(x)
     for (i in 1..lx) ans /= 10
     return ans % 10
 
