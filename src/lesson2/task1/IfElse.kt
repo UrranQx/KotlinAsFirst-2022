@@ -122,7 +122,7 @@ fun whichRookThreatens(
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
 ): Int {
-    var ans: Int = 0
+    var ans = 0
     if (rookCanShoot(rookX1, rookY1, kingX, kingY)) ans += 1
     if (rookCanShoot(rookX2, rookY2, kingX, kingY)) ans += 2
     return ans
@@ -145,7 +145,7 @@ fun rookOrBishopThreatens(
 ): Int {
 
 
-    var ans: Int = 0
+    var ans = 0
     if (rookCanShoot(rookX, rookY, kingX, kingY)) ans += 1
     if (bishopCanShoot(bishopX, bishopY, kingX, kingY)) ans += 2
     return ans
@@ -164,9 +164,11 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val side1 = minOf(a, b, c)
     val side2 = a + b + c - hypo - side1
     if (side1 + side2 <= hypo) return -1 //если side1+side2==hypo => треугольник вырождается в линию
-    if (hypo * hypo < side1 * side1 + side2 * side2) return 0
-    if (hypo * hypo == side1 * side1 + side2 * side2) return 1
-    return 2
+    return when {
+        hypo * hypo < side1 * side1 + side2 * side2 -> 0
+        hypo * hypo == side1 * side1 + side2 * side2 -> 1
+        else -> 2
+    }
 }
 
 
