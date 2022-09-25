@@ -248,7 +248,16 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    val ans = mutableListOf<Int>()
+    var t = n
+    while (t > 0) {
+        ans.add(t % base)
+        t /= base
+    }
+    return ans.toList().reversed()
+
+}
 
 /**
  * Сложная (4 балла)
@@ -261,7 +270,15 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    val alph = "0123456789abcdefghijklmnopqrstuvwxyz"
+    var ans = ""
+    val convTemp = convert(n, base)
+    for (i in 0 until convTemp.size) {
+        ans += alph[convTemp[i]]
+    }
+    return ans
+}
 
 /**
  * Средняя (3 балла)
@@ -270,7 +287,12 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var ans = 0
+    for (i in 0 until digits.size) ans +=
+        digits[i] * base.toDouble().pow(digits.size - i - 1).toInt()
+    return ans
+}
 
 /**
  * Сложная (4 балла)
@@ -284,7 +306,12 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, str.toInt(base)), запрещается.
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var ans = 0
+    val alph = "0123456789abcdefghijklmnopqrstuvwxyz"
+    for (i in 0 until str.length) ans += alph.indexOf(str[i]) * base.toDouble().pow(str.length - i - 1).toInt()
+    return ans
+}
 
 /**
  * Сложная (5 баллов)
@@ -294,7 +321,22 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String = TODO()/*{
+    val alph = "IVXLCDM"
+    val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
+    var ans = ""
+    //val temp = mutableListOf(1)
+    /*for (i in 1..6) temp += if (i % 2 == 0) temp[i - 1] * 5 else temp[i - 1] * 2*/
+    val nums = convert(n, 10)
+    for (i in 0 until nums.size) {
+        val base = nums.size - i - 1
+        for (j in 1..nums[i]) ans += alph[2 * base]
+    }
+    return ans
+
+}
+// держим в уме текущую и предыдущую цифру. Если текущая больше предыдущей, то соотв-но s+= current - 2*prev else s+= current
+*/
 
 /**
  * Очень сложная (7 баллов)
