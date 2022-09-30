@@ -322,7 +322,7 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()/*{
+fun roman(n: Int): String {
     val alph = "IVXLCDM"
     val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
     var ans = ""
@@ -331,13 +331,20 @@ fun roman(n: Int): String = TODO()/*{
     val nums = convert(n, 10)
     for (i in 0 until nums.size) {
         val base = nums.size - i - 1
-        for (j in 1..nums[i]) ans += alph[2 * base]
+        if (nums[i] == 9) ans += alph[2 * base] + "${alph[base * 2 + 2]}"
+        if (nums[i] == 4) ans += alph[2 * base] + "${alph[base * 2 + 1]}"
+        if (nums[i] in 6..8) {
+            ans += alph[2 * base + 1]; for (j in 1..nums[i] - 5) ans += alph[2 * base]
+        }
+        if (nums[i] < 4) for (j in 1..nums[i]) ans += alph[2 * base]
+
     }
+    println(nums)
     return ans
 
 }
 // держим в уме текущую и предыдущую цифру. Если текущая больше предыдущей, то соотв-но s+= current - 2*prev else s+= current
-*/
+
 
 /**
  * Очень сложная (7 баллов)
