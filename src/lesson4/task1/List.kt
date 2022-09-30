@@ -334,12 +334,13 @@ fun roman(n: Int): String {
         if (nums[i] == 9) ans += alph[2 * base] + "${alph[base * 2 + 2]}"
         if (nums[i] == 4) ans += alph[2 * base] + "${alph[base * 2 + 1]}"
         if (nums[i] in 5..8) {
-            ans += alph[2 * base + 1]; for (j in 1..nums[i] - 5) ans += if(nums[i]==5) 0 else alph[2 * base]
+            ans += alph[2 * base + 1]
+            for (j in 1..nums[i] - 5) ans += if (nums[i] == 5) 0 else alph[2 * base]
         }
         if (nums[i] < 4) for (j in 1..nums[i]) ans += alph[2 * base]
 
     }
-    println(nums)
+    //println(nums)
     return ans
     //591
 
