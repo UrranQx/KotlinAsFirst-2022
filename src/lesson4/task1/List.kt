@@ -333,14 +333,15 @@ fun roman(n: Int): String {
         val base = nums.size - i - 1
         if (nums[i] == 9) ans += alph[2 * base] + "${alph[base * 2 + 2]}"
         if (nums[i] == 4) ans += alph[2 * base] + "${alph[base * 2 + 1]}"
-        if (nums[i] in 6..8) {
-            ans += alph[2 * base + 1]; for (j in 1..nums[i] - 5) ans += alph[2 * base]
+        if (nums[i] in 5..8) {
+            ans += alph[2 * base + 1]; for (j in 1..nums[i] - 5) ans += if(nums[i]==5) 0 else alph[2 * base]
         }
         if (nums[i] < 4) for (j in 1..nums[i]) ans += alph[2 * base]
 
     }
     println(nums)
     return ans
+    //591
 
 }
 // держим в уме текущую и предыдущую цифру. Если текущая больше предыдущей, то соотв-но s+= current - 2*prev else s+= current
@@ -354,3 +355,4 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String = TODO()
+// 32_235_000
