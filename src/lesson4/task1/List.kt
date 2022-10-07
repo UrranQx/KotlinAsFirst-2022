@@ -209,16 +209,48 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    //var factors: MutableList<Int> = mutableListOf()
-    for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
-        if (n % i == 0) {
-            return listOf(i) + factorize(n / i)
-
-        }
+    fun isPrime(num: Int): Boolean {
+        for (i in 2..sqrt(num.toDouble()).toInt()) if (num % i == 0) return false
+        return true
     }
-    return if (n > 1) listOf(n) else emptyList()
-}
 
+    fun solution1(n: Int): List<Int> {
+        val factors: MutableList<Int> = mutableListOf()
+        var temp = n
+        while (temp != 1) {
+            for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
+                if (isPrime(i)) while (temp % i == 0) {
+                    factors.add(i)
+                    temp /= i
+                }
+            }
+        }
+        return factors
+    }
+
+    fun solution2(n: Int): List<Int> {
+        for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
+            if (n % i == 0) {
+                return listOf(i) + factorize(n / i)
+
+            }
+        }
+        return if (n > 1) listOf(n) else emptyList()
+    }
+    //return solution2(n)
+    return solution1(n)
+}
+/*for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
+    if (n % i == 0) {
+        return listOf(i) + factorize(n / i)
+        Решение интересное, но не самое эффективное. Получается что каждый раз когда нужно вернуть результат вы
+        складываете два неизменяемых списка. А при их сложении каждый раз создается новый список в который
+        копируются элементы из двух предыдущих. Лучше здесь использовать изменяемые (mutable) списки
+        и решить задачу в цикле
+    }
+}
+return if (n > 1) listOf(n) else emptyList()
+*/
 /**
  * Сложная (4 балла)
  *
@@ -228,13 +260,13 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 /*{
-    var ans = ""
-    val divs = factorize(n)
-    if (divs.size == 1) return n.toString()
-    for (i in 0 until divs.size - 1) {
-        ans += divs[i].toString() + "*"
-    }
-    return ans + divs[divs.size - 1]
+var ans = ""
+val divs = factorize(n)
+if (divs.size == 1) return n.toString()
+for (i in 0 until divs.size - 1) {
+    ans += divs[i].toString() + "*"
+}
+return ans + divs[divs.size - 1]
 }
 */
 
@@ -270,12 +302,12 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     val alph = "0123456789abcdefghijklmnopqrstuvwxyz"
-    //var ans = ""
+//var ans = ""
     val ans2 = StringBuilder()
     val convTemp = convert(n, base)
     println(ans2)
     for (i in 0 until convTemp.size) ans2.append(alph[convTemp[i]])
-    //return ans
+//return ans
     return ans2.toString()
 }
 
@@ -322,9 +354,9 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     val alph = "IVXLCDM"
-    //val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
+//val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
     var ans = ""
-    //val temp = mutableListOf(1)
+//val temp = mutableListOf(1)
     /*for (i in 1..6) temp += if (i % 2 == 0) temp[i - 1] * 5 else temp[i - 1] * 2*/
     val nums = convert(n, 10)
     for (i in 0 until nums.size) {
@@ -338,9 +370,9 @@ fun roman(n: Int): String {
         if (nums[i] < 4) for (j in 1..nums[i]) ans += alph[2 * base]
 
     }
-    //println(nums)
+//println(nums)
     return ans
-    //591
+//591
 
 }
 
