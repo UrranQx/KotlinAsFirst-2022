@@ -217,12 +217,18 @@ fun factorize(n: Int): List<Int> {
     fun solution1(n: Int): List<Int> {
         val factors: MutableList<Int> = mutableListOf()
         var temp = n
-        while (temp != 1) {
-            for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
+        var i = 2
+        if (isPrime(n)) return listOf(n)
+        while (temp > 1) {
+            var c = 0
+            val boundary = temp
+            while ((i <= boundary) && (c < 1)) {
                 if (isPrime(i)) while (temp % i == 0) {
                     factors.add(i)
                     temp /= i
                 }
+                i += 1
+                c += 1
             }
         }
         return factors
@@ -232,7 +238,6 @@ fun factorize(n: Int): List<Int> {
         for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
             if (n % i == 0) {
                 return listOf(i) + factorize(n / i)
-
             }
         }
         return if (n > 1) listOf(n) else emptyList()
