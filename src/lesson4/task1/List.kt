@@ -146,11 +146,9 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isNotEmpty()) {
-        val delta = -mean(list)
-        for (i in 0 until list.size) {
-            list[i] += delta
-        }
+    val delta = -mean(list)
+    for (i in 0 until list.size) {
+        list[i] += delta
     }
     return list
 }
@@ -197,10 +195,8 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isNotEmpty()) {
-        for (i in 1 until list.size) {
-            list[i] += list[i - 1]
-        }
+    for (i in 1 until list.size) {
+        list[i] += list[i - 1]
     }
     return list
 }
@@ -213,6 +209,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
+    //var factors: MutableList<Int> = mutableListOf()
     for (i in 2..sqrt(n.toDouble()).toInt() + 1) {
         if (n % i == 0) {
             return listOf(i) + factorize(n / i)
@@ -256,7 +253,7 @@ fun convert(n: Int, base: Int): List<Int> {
         ans.add(t % base)
         t /= base
     }
-    return ans.toList().reversed()
+    return ans.reversed()
 
 }
 
@@ -273,12 +270,13 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     val alph = "0123456789abcdefghijklmnopqrstuvwxyz"
-    var ans = ""
+    //var ans = ""
+    val ans2 = StringBuilder()
     val convTemp = convert(n, base)
-    for (i in 0 until convTemp.size) {
-        ans += alph[convTemp[i]]
-    }
-    return ans
+    println(ans2)
+    for (i in 0 until convTemp.size) ans2.append(alph[convTemp[i]])
+    //return ans
+    return ans2.toString()
 }
 
 /**
@@ -324,7 +322,7 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     val alph = "IVXLCDM"
-    val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
+    //val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
     var ans = ""
     //val temp = mutableListOf(1)
     /*for (i in 1..6) temp += if (i % 2 == 0) temp[i - 1] * 5 else temp[i - 1] * 2*/
@@ -345,7 +343,6 @@ fun roman(n: Int): String {
     //591
 
 }
-// держим в уме текущую и предыдущую цифру. Если текущая больше предыдущей, то соотв-но s+= current - 2*prev else s+= current
 
 
 /**
