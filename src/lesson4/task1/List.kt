@@ -3,8 +3,10 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import java.lang.NullPointerException
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.reflect.typeOf
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -215,15 +217,15 @@ fun factorize(n: Int): List<Int> {
     }
 
     fun solution1(n: Int): List<Int> {
-        val factors: MutableList<Int> = mutableListOf()
+        val factors = mutableListOf<Int>()
         var temp = n
         var i = 2
         if (isPrime(n)) return listOf(n)
         while (temp > 1) {
             var c = 0
             val boundary = temp
-            while ((i <= boundary) && (c < 1)) {
-                if (isPrime(i)) while (temp % i == 0) {
+            while ((i <= boundary && c < 1)) {
+                while (temp % i == 0) {
                     factors.add(i)
                     temp /= i
                 }
@@ -344,8 +346,14 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var ans = 0
-    val alph = "0123456789abcdefghijklmnopqrstuvwxyz"
-    for (i in 0 until str.length) ans += alph.indexOf(str[i]) * base.toDouble().pow(str.length - i - 1).toInt()
+    for (i in 0 until str.length) {
+        val regulate = if (str[i] > '9') (str[i] - 49).code + 10 - 48 else str[i].code - 48
+        ans += regulate * base.toDouble().pow(str.length - i - 1).toInt()
+        /*
+        Как я понял, .indexOf в наихудшем случае будет добавлять по n операций, а через вычисление
+        regulate это ~ О(1)
+         */
+    }
     return ans
 }
 
@@ -360,23 +368,23 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     val alph = "IVXLCDM"
 //val desyph = listOf(1, 5, 10, 50, 100, 500, 1000)
-    var ans = ""
+    val ans = StringBuilder()
 //val temp = mutableListOf(1)
     /*for (i in 1..6) temp += if (i % 2 == 0) temp[i - 1] * 5 else temp[i - 1] * 2*/
     val nums = convert(n, 10)
     for (i in 0 until nums.size) {
         val base = nums.size - i - 1
-        if (nums[i] == 9) ans += alph[2 * base] + "${alph[base * 2 + 2]}"
-        if (nums[i] == 4) ans += alph[2 * base] + "${alph[base * 2 + 1]}"
+        if (nums[i] == 9) ans.append(alph[2 * base] + "${alph[base * 2 + 2]}")
+        if (nums[i] == 4) ans.append(alph[2 * base] + "${alph[base * 2 + 1]}")
         if (nums[i] in 5..8) {
-            ans += alph[2 * base + 1]
-            for (j in 1..nums[i] - 5) ans += if (nums[i] == 5) 0 else alph[2 * base]
+            ans.append(alph[2 * base + 1])
+            for (j in 1..nums[i] - 5) ans.append(if (nums[i] == 5) 0 else alph[2 * base])
         }
-        if (nums[i] < 4) for (j in 1..nums[i]) ans += alph[2 * base]
+        if (nums[i] < 4) for (j in 1..nums[i]) ans.append(alph[2 * base])
 
     }
 //println(nums)
-    return ans
+    return ans.toString()
 //591
 
 }
@@ -389,5 +397,8 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+
+    return ""
+}
 // 32_235_000
