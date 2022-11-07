@@ -3,10 +3,10 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import java.lang.NullPointerException
+
 import kotlin.math.pow
 import kotlin.math.sqrt
-import kotlin.reflect.typeOf
+
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -224,7 +224,7 @@ fun factorize(n: Int): List<Int> {
         while (temp > 1) {
             var c = 0
             val boundary = temp
-            while ((i <= boundary && c < 1)) {
+            while (i <= boundary && c < 1) {
                 while (temp % i == 0) {
                     factors.add(i)
                     temp /= i
@@ -347,12 +347,9 @@ fun decimal(digits: List<Int>, base: Int): Int {
 fun decimalFromString(str: String, base: Int): Int {
     var ans = 0
     for (i in 0 until str.length) {
-        val regulate = if (str[i] > '9') (str[i] - 49).code + 10 - 48 else str[i].code - 48
+        //val regulate = if (str[i] > '9') (str[i] - 49).code + 10 - 48 else str[i].code - 48
+        val regulate = if (str[i].isDigit()) str[i].digitToInt() else (str[i] - 'a' + 10)
         ans += regulate * base.toDouble().pow(str.length - i - 1).toInt()
-        /*
-        Как я понял, .indexOf в наихудшем случае будет добавлять по n операций, а через вычисление
-        regulate это ~ О(1)
-         */
     }
     return ans
 }
