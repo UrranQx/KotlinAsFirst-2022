@@ -275,7 +275,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val letters = mutableSetOf<Char>()
     for (i in 0 until word.length) letters.add(word[i])
 //    println("${setOf(chars)}, $letters")
-    return (chars.toSet()) == letters
+    return if (word.isEmpty()) true else (chars.toSet()) == letters
 }
 
 /**
