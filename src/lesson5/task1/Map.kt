@@ -99,12 +99,8 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val table = mutableMapOf<Int, List<String>>()
-    val students: MutableList<MutableList<String>> = MutableList(6) { mutableListOf<String>() }
-    for ((name, grade) in grades) {
-        students[grade].add(name)
-        table[grade] = students[grade]
-    }
+    val table = mutableMapOf<Int, MutableList<String>>()
+    for ((name, grade) in grades) table[grade]?.add(name)
     return table
 }
 
@@ -328,8 +324,8 @@ fun hasAnagrams(words: List<String>): Boolean {
         return letters
     }
 
-    val angrms = (words.map { it -> listOf(toSetOfChars(it), extractRepeats(toListOfChars(it))) }).toSet().size
-    return words.size != angrms
+    val anagrams = (words.map { it -> listOf(toSetOfChars(it), extractRepeats(toListOfChars(it))) }).toSet().size
+    return words.size != anagrams
 }
 
 /**
