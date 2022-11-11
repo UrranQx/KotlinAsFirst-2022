@@ -367,7 +367,7 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val allKnots = friends.keys.toMutableSet()
-    for ((key, element) in friends) allKnots.addAll(element)
+    for (element in friends.values) allKnots.addAll(element)
     //print(allKnots)
     val ans = mutableMapOf<String, Set<String>>()
     fun askConnections(name: String, theirConnections: Set<String> = friends[name] ?: setOf("")): Set<String> {
@@ -513,7 +513,6 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         //println()
         i++
     }
-
     //ans = table[allElements][maxWeight].second //Ответ я вычислю, проходясь по таблице, основываясь на
     return table[treasures.size - 1][capacity].second
 }
