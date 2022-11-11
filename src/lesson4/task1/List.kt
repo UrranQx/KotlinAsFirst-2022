@@ -394,8 +394,5 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String {
-
-    return ""
-}
+fun russian(n: Int): String = TODO()
 // 32_235_000

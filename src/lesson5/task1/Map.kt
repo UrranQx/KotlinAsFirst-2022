@@ -387,7 +387,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
             for (connection in theirmates) {
                 if (personsConnections.containsAll(personsConnections.plus(connection))) continue //
                 // т.е если добавление ни на что не повлияло
-                if (connection!=name) personsConnections.add(connection)
+                if (connection != name) personsConnections.add(connection)
                 if (friends[connection] == null) continue
                 askUsername(connection, friends[connection] as MutableSet<String>)
             }
