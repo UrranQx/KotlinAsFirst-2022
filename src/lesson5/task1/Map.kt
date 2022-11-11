@@ -365,7 +365,56 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "GoodGnome" to setOf()
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val allKnots = friends.keys.toMutableSet()
+    for ((key, element) in friends) allKnots.addAll(element)
+    //print(allKnots)
+    val ans = mutableMapOf<String, Set<String>>()
+    fun askConnections(name: String, theirConnections: Set<String> = friends[name] ?: setOf("")): Set<String> {
+        //спрашивает связи дальше идущего по цепи и возвращает их сетом
+        val personsConnections = mutableSetOf<String>()
+        fun askUsername(person: String, theirmates: MutableSet<String>) {
+            //как работает asking -
+            //у нас есть "глобальная" копилка - PersonsConnections
+            //туда, по мере погружения в связи, будут записываться имена.
+            //Какая проблема- ? => Надо определиться, когда мы заходим в цикл, и пропустить его.
+            //Если нет связей, ничего не добавить и УСЁ
+            //Если есть связи у спрашиваемого человека, то спрашиваем связи у его связей и залетаем в рекурсию
+            //Мы конечно же пытаемся добавить в personsConnections новых людей и их связи, но если
+            //Но если ничего не добавляется, следовательно, у него нет связей, либо, т.к у нас сет, они уже записаны
+
+            if (theirmates.isEmpty()) return
+            for (connection in theirmates) {
+                if (personsConnections.containsAll(personsConnections.plus(connection))) continue //
+                // т.е если добавление ни на что не повлияло
+                if (connection!=name) personsConnections.add(connection)
+                if (friends[connection] == null) continue
+                askUsername(connection, friends[connection] as MutableSet<String>)
+            }
+        }
+        askUsername(name, theirConnections.toMutableSet())
+
+
+        return personsConnections
+
+
+    }
+    for (name in allKnots) {
+        if (friends[name] != null) {//если есть связи. Если нет, то он пустышка
+            //кого знает? - friends[name] - set<string>
+            friends[name]?.let {
+                ans.put(
+                    name, it.plus(askConnections(name))
+                )
+            } //добавляем того, кого знает name и связи его знакомых
+
+
+        } else {//пустышка
+            ans.put(name, setOf())
+        }
+    }
+    return ans
+}
 
 /**
  * Сложная (6 баллов)
