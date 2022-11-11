@@ -490,7 +490,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             // т.е по адресу [i-1][j- (Вес Артефакта) ]
             else {
                 if (table[i - 1][j].first <= table[i][j - weight].first + price) {
-                    table[i][j] = (table[i][j - weight].first + price, (table[i][j-weight].second + artifact))
+                    table[i][j] = Pair(table[i][j - weight].first + price, table[i][j-weight].second.add(artifact))
                 }
 
             }
