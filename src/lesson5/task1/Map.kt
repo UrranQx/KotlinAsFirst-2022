@@ -276,9 +276,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val letters = mutableSetOf<Char>()
-    for (i in 0 until word.length) letters.add(word[i])
+    for (i in 0 until word.length) letters.add(word[i].lowercaseChar())
 //    println("${setOf(chars)}, $letters")
-    return if (word.isEmpty()) true else (chars.toSet()).containsAll(letters)
+    return if (word.isEmpty()) true else (chars.map { it.lowercaseChar() }.toSet()).containsAll(letters)
 }
 
 /**
@@ -457,6 +457,7 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {// по веритикали- список предметов
+    if (treasures.size == 0) return emptySet() // вырожденный случай
     val table: Array<Array<Pair<Int, MutableSet<String>>>> =
         Array(treasures.size) {
             Array<Pair<Int, MutableSet<String>>>(capacity + 1) { Pair(0, mutableSetOf()) }
@@ -484,16 +485,16 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             //**будем считать, что элементы пронумерованы по порядку, в котором их достает итератор.
             if (weight > j) table[i][j] = if (i >= 1) table[i - 1][j] else Pair(0, mutableSetOf())
             // Иначе, если артефакт "подъемный", то мы стоим перед выбором: Брать или не брать? Вот в чем вопрос.
-            // чтобы получить максимальное значение, мы скормим maxOf значения с и без арта.
+            // чтобы получить максимальное значение,мы"скормим maxOf"(на самом деле надо сравнить) значения с и без арта
             // казалось бы, надо всегда брать арт-к, но только мы сравниваем значение такое, чтобы вес арта поместился,
             // т.е по адресу [i-1][j- (Вес Артефакта) ]
             else {
-                if (i<1){
+                if (i < 1) {
                     table[i][j] = Pair(
                         table[i][j - weight].first + price,
-                        table[i][j - weight].second.plus(artifact).toMutableSet())
-                }
-                else {
+                        table[i][j - weight].second.plus(artifact).toMutableSet()
+                    )
+                } else {
 
 
                     if (table[i - 1][j].first <= table[i][j - weight].first + price) {
@@ -510,5 +511,5 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     }
 
     //ans = table[allElements][maxWeight].second //Ответ я вычислю, проходясь по таблице, основываясь на
-    return table[treasures.size-1][capacity].second
+    return table[treasures.size - 1][capacity].second
 }
