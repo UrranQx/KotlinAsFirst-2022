@@ -496,8 +496,12 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
                     )
                 } else {
 
-
-                    if (table[i - 1][j].first <= table[i][j - weight].first + price) {
+                    if (table[i - 1][j].first == table[i][j - weight].first + price) { //Вырожденный случай
+                        table[i][j] = Pair(
+                            table[i - 1][j].first + price,
+                            table[i - 1][j].second.plus(artifact).toMutableSet()
+                        )
+                    } else if (table[i - 1][j].first < table[i][j - weight].first + price) {
                         table[i][j] = Pair(
                             table[i][j - weight].first + price,
                             table[i][j - weight].second.plus(artifact).toMutableSet()
@@ -513,3 +517,11 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     //ans = table[allElements][maxWeight].second //Ответ я вычислю, проходясь по таблице, основываясь на
     return table[treasures.size - 1][capacity].second
 }
+//Worst case scenario:
+/*assertEquals(
+    setOf("1","0"),
+    lesson5.task1.bagPacking(
+        mapOf("1" to (1 to 1), "0" to (1 to 1)),
+        2
+    )
+)*/
