@@ -496,15 +496,15 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
                     )
                 } else {
 
-                    if (table[i - 1][j].first == table[i][j - weight].first + price) { //Вырожденный случай
+                    /*       if (table[i - 1][j].first == table[i][j - weight].first + price) { //Вырожденный случай
+                               table[i][j] = Pair(
+                                   table[i - 1][j].first + price,
+                                   table[i - 1][j].second.plus(artifact).toMutableSet()
+                               )}*/
+                    if (table[i - 1][j].first <= table[i - 1][j - weight].first + price) {
                         table[i][j] = Pair(
-                            table[i - 1][j].first + price,
-                            table[i - 1][j].second.plus(artifact).toMutableSet()
-                        )
-                    } else if (table[i - 1][j].first < table[i][j - weight].first + price) {
-                        table[i][j] = Pair(
-                            table[i][j - weight].first + price,
-                            table[i][j - weight].second.plus(artifact).toMutableSet()
+                            table[i - 1][j - weight].first + price,
+                            table[i - 1][j - weight].second.plus(artifact).toMutableSet()
                         )
                     } else table[i][j] = table[i - 1][j]
                 }
