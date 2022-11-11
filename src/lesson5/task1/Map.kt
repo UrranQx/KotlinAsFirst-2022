@@ -3,6 +3,7 @@
 package lesson5.task1
 
 import lesson4.task1.mean
+import ru.spbstu.kotlin.typeclass.classes.Monoid.Companion.plus
 
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
@@ -456,4 +457,48 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {// по веритикали- список предметов
+    val table: Array<Array<Pair<Int, MutableSet<String>>>> =
+        Array(treasures.size) {
+            Array<Pair<Int, MutableSet<String>>>(capacity + 1) { Pair(0, mutableSetOf()) }
+        } // по горизонтали - Вес
+    // а внутри Пара - Мак. сумма, к этому весу, если взять все элементы от 0 до этого, + Множество названий пердметов,
+    // которые мы взяли для такой суммы
+    // - ? Почему size:capacity + 1 ? - потому что нумерация начинается с нуля, и мы будем считать возможным
+    // что существует артефакт с нулевой массой, его кстати, надо брать в любом случае, как и все те с отрицательной
+    // массой (хорошо, что хоть цена не отрицательная)
+
+    var i = 0
+    for ((artifact, stats) in treasures) {//stats - это пара из Веса и Цены
+        val weight = stats.first
+        val price = stats.second
+        for (j in 0 until capacity + 1) {
+            if (i == treasures.size) break
+            print(table[i][j])
+            print(" || ")
+            // Ячейка [%artifact%][Вес], в ней хранится Пара значений - $$ Доллары за арт $$ и Множество собраных артов
+
+            // У нас есть выбор: мы можем брать артефакт, или нет
+
+            // Если вес артефакта превышает заданный вес j, то мы не берем артефакт. А значит максимальное значение
+            // с таким же макс весом j и с набором артефактов, включающих i-ый** , берется из строчки выше
+            //**будем считать, что элементы пронумерованы по порядку, в котором их достает итератор.
+            if (stats.first > j) table[i][j] = if (i > 1) table[i - 1][j] else Pair(0, mutableSetOf())
+            // Иначе, если артефакт "подъемный", то мы стоим перед выбором: Брать или не брать? Вот в чем вопрос.
+            // чтобы получить максимальное значение, мы скормим maxOf значения с и без арта.
+            // казалось бы, надо всегда брать арт-к, но только мы сравниваем значение такое, чтобы вес арта поместился,
+            // т.е по адресу [i-1][j- (Вес Артефакта) ]
+            else {
+                if (table[i - 1][j].first <= table[i][j - weight].first + price) {
+                    table[i][j] = (table[i][j - weight].first + price, (table[i][j-weight].second + artifact))
+                }
+
+            }
+        }
+        println()
+        i++
+    }
+
+    //ans = table[allElements][maxWeight].second //Ответ я вычислю, проходясь по таблице, основываясь на
+    return TODO()
+}
