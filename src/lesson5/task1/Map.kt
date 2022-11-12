@@ -387,7 +387,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
             for (connection in theirmates) {
                 if (personsConnections.containsAll(personsConnections.plus(connection))) continue //
                 // т.е если добавление ни на что не повлияло
-                if (connection != name) personsConnections.add(connection)
+                if (connection != name) personsConnections.add(connection) // Т.к. шизофрении у людей пока что нет,
+                // сами с собой они дружить не научились ¯\_(ツ)_/¯
                 if (friends[connection] == null) continue
                 askUsername(connection, friends[connection] as MutableSet<String>)
             }
@@ -490,8 +491,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             // т.е по адресу [i-1][j- (Вес Артефакта) ]
             else {
                 if (i < 1) {
-                    table[i][j] = Pair(
-                        price, mutableSetOf(artifact))
+                    table[i][j] = Pair(price, mutableSetOf(artifact))
                 } else {
 
                     /*       if (table[i - 1][j].first == table[i][j - weight].first + price) { //Вырожденный случай
