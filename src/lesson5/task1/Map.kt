@@ -491,9 +491,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
             else {
                 if (i < 1) {
                     table[i][j] = Pair(
-                        table[i][j - weight].first + price,
-                        table[i][j - weight].second.plus(artifact).toMutableSet()
-                    )
+                        price, mutableSetOf(artifact))
                 } else {
 
                     /*       if (table[i - 1][j].first == table[i][j - weight].first + price) { //Вырожденный случай
