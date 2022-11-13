@@ -83,6 +83,7 @@ fun isIntCheck(chars: String): Boolean {
     return true
 }
 
+
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
     if (parts.size != 3) return ""
@@ -94,7 +95,7 @@ fun dateStrToDigit(str: String): String {
     val month = months[parts[1]] ?: return ""
     val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
     if (day.toInt() > daysInMonth(month, year)) return ""
-    return String.format("%02d.%02d.d", day, month, year)
+    return String.format("%02d.%02d.%d", day, month, year)
 }
 
 /**
@@ -136,6 +137,8 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String = TODO()
+// Если есть скобки, но в них пусто -> emptyString
+// Если есть что-то не из множества SetOf<String>("+", "-", "(", ")")
 
 /**
  * Средняя (5 баллов)
