@@ -69,6 +69,7 @@ fun deleteMarked(inputName: String, outputName: String) {
         //println(line)
         if (line.isEmpty()) writer.write("\n\n")
         if (line.isNotEmpty()) if (line.first().toString() == "_") continue
+        if(line.contains("\n")) writer.write("\n")
         writer.write(line)
     }
     writer.close()
