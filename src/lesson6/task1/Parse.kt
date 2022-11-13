@@ -77,8 +77,8 @@ fun main() {
  * входными данными.
  */
 fun isIntCheck(chars: String): Boolean {
-    for (i in 0 until chars.length) {
-        if (!chars[i].isDigit()) return false
+    for (element in chars) {
+        if (!element.isDigit()) return false
     }
     return true
 }
@@ -94,7 +94,7 @@ fun dateStrToDigit(str: String): String {
     val day = if (isIntCheck(parts[0])) parts[0].toInt() else return ""
     val month = months[parts[1]] ?: return ""
     val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
-    if (day.toInt() > daysInMonth(month, year)) return ""
+    if (day > daysInMonth(month, year)) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
 
