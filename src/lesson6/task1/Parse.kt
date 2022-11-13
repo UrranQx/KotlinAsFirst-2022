@@ -136,9 +136,19 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String = TODO() //{
+/*    val whiteList = setOf<String>(" ", "+", "-", "(", ")")
+    var numInBrackets: String
+    var ans = ""
+    for (char in phone) {
+
+        if(!(char.isDigit() && whiteList.contains(char.toString()))) return ""
+        if(char.toString() == "(")
+
+    }*/
+//}
 // Если есть скобки, но в них пусто -> emptyString
-// Если есть что-то не из множества SetOf<String>("+", "-", "(", ")")
+// Если есть что-то не из множества setOf<String>("+", "-", "(", ")")
 
 /**
  * Средняя (5 баллов)
