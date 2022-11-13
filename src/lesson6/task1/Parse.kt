@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +76,26 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun isIntCheck(chars: String): Boolean {
+    for (i in 0 until chars.length) {
+        if (!chars[i].isDigit()) return false
+    }
+    return true
+}
+
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+    if (parts.size != 3) return ""
+    val months = mapOf<String, Int>(
+        "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
+        "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
+    )
+    val day = if (isIntCheck(parts[0])) parts[0].toInt() else return ""
+    val month = months[parts[1]] ?: return ""
+    val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
+    if (day.toInt() > daysInMonth(month, year)) return ""
+    return String.format("%02d.%02d.%04d", day, month, year)
+}
 
 /**
  * Средняя (4 балла)
@@ -86,7 +107,19 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    if (parts.size != 3) return ""
+    val digitToMonth = mapOf<Int, String>(
+        1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
+        7 to "июля", 8 to "августа", 9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря"
+    )
+    val day = if (isIntCheck(parts[0])) parts[0].toInt() else return ""
+    val month = digitToMonth[parts[1].toInt()] ?: return ""
+    val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
+    if (day > daysInMonth(parts[1].toInt(), year)) return ""
+    return String.format("%d %s %d", day, month, year)
+}
 
 /**
  * Средняя (4 балла)
