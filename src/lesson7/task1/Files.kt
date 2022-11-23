@@ -87,7 +87,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val strings = substrings.toSet()
 // Алгос 1. Тупой перебор
 // Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
-    val allStrings = File(inputName).readLines().map { it.lowercase() }.joinToString("")
+    val allStrings = File(inputName).readLines().map { it.lowercase() }.joinToString("\n")
 // Предлагаю пройтись сначала по вхождениям малых по размеру строк, затем больших, хотя это никак не влияет на вывод
     for (string in strings) {
         for (i in 0 until allStrings.length - string.length + 1) {
