@@ -76,14 +76,7 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun isIntCheck(chars: String): Boolean {
-    for (element in chars) {
-        if (!element.isDigit()) return false
-    }
-    return true
-}
-
-
+//fun isIntCheck(chars: String): Boolean = chars.all { it.isDigit() }
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
     if (parts.size != 3) return ""
@@ -91,9 +84,9 @@ fun dateStrToDigit(str: String): String {
         "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
         "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
     )
-    val day = if (isIntCheck(parts[0])) parts[0].toInt() else return ""
+    val day = parts[0].toIntOrNull() ?: return ""
     val month = months[parts[1]] ?: return ""
-    val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
+    val year = parts[2].toIntOrNull() ?: return ""
     if (day > daysInMonth(month, year)) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
@@ -115,9 +108,9 @@ fun dateDigitToStr(digital: String): String {
         1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
         7 to "июля", 8 to "августа", 9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря"
     )
-    val day = if (isIntCheck(parts[0])) parts[0].toInt() else return ""
+    val day = parts[0].toIntOrNull() ?: return ""
     val month = digitToMonth[parts[1].toInt()] ?: return ""
-    val year = if (isIntCheck(parts[2])) parts[2].toInt() else return ""
+    val year = parts[2].toIntOrNull() ?: return ""
     if (day > daysInMonth(parts[1].toInt(), year)) return ""
     return String.format("%d %s %d", day, month, year)
 }
