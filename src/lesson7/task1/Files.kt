@@ -2,7 +2,6 @@
 
 package lesson7.task1
 
-import ru.spbstu.wheels.stack
 import java.io.File
 
 // Урок 7: работа с файлами
@@ -66,11 +65,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
-        //println(line)
-        if (line.isEmpty()) writer.write("\n\n")
         if (line.isNotEmpty()) if (line.first().toString() == "_") continue
-        if(line.contains("\n")) writer.write("\n")
         writer.write(line)
+        writer.newLine()
     }
     writer.close()
 }
@@ -86,14 +83,32 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val ans = mutableMapOf<String, Int>()
-    val setOfsubstrs = substrings
-    val allStrings = File(inputName).readLines().map { it.lowercase() }.toSet()
-    for (i in 0 until setOfsubstrs.size) if (setOfsubstrs[i].lowercase()
-        in allStrings
-    ) ans[setOfsubstrs[i]] = ans[setOfsubstrs[i]]!! + 1
+
+    val strings = substrings
+// Алгос 1. Тупой перебор
+// Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
+    val allStrings = File(inputName).readLines().map { it.lowercase() }.joinToString("")
+// Предлагаю пройтись сначала по вхождениям малых по размеру строк, затем больших, хотя это никак не влияет на вывод
+    for (string in strings) {
+        for (i in 0 until allStrings.length - string.length + 1) {
+            if (allStrings.substring(i, i + string.length) == string.lowercase()) {
+                ans[string] = 1 + (ans[string] ?: 0)
+            }
+        }
+        if (ans[string] == null) ans[string] = 0
+    }
     return ans
 }
-
+//другой алгос
+// мы считываем чар, если с такого начинается any подстрока, то включается второй итератор,
+// который бежит дальше по чарам и если (a: файл закончился b: следующий чар ни с какой либо подстрокой не совпадает[это значит немного другое]
+// то двигаем дальше первый бегунок, иначе продолжаем. И Если мы собрали подстроку, то "Собираем" подстроку,
+// но делаем еще итерацию, ведь дальше может быть постфикс тоже заданной подстроки,
+// типо "подстрока" = "собранная" + "постфикс", а мы бы такую строку бы не собрали, т.к. думаем, что нам интересно любое
+// бла бла бла.
+// тут будет цикл в цикле, и нередко в этом вложенном цикле мы еще по листу "strings" будем бегать и вытаскивать [j]- ю
+// "букву"
+//
 
 /**
  * Средняя (12 баллов)
