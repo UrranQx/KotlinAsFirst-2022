@@ -129,19 +129,27 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO() //{
-/*    val whiteList = setOf<String>(" ", "+", "-", "(", ")")
+fun flattenPhoneNumber(phone: String): String {
+    val whiteList = setOf<String>(" ", "+", "-", "(", ")")
     var numInBrackets: String
-    var ans = ""
-    for (char in phone) {
-
-        if(!(char.isDigit() && whiteList.contains(char.toString()))) return ""
-        if(char.toString() == "(")
-
-    }*/
-//}
+    var ans = StringBuilder()
+    var i = 0
+    var j = 0
+    for (i in phone.indices) {
+        val char = phone[i]
+        ans.append(if (char.isDigit() || char.toString() == "+") char else "")
+        val nextChar = if (i < phone.length - 1) phone[i + 1] else 'a'
+        if (!(char.isDigit() || whiteList.contains(char.toString()))) return ""
+        if (char.toString() == "(" && !nextChar.isDigit()) return ""
+    }
+    return ans.toString()
+}
 // Если есть скобки, но в них пусто -> emptyString
+// Было выяснено, что после "(" должна следовать цифра
 // Если есть что-то не из множества setOf<String>("+", "-", "(", ")")
+// Из всего этого можно составить RegEx
+// Первый символ - любой из вайтлиста
+//
 
 /**
  * Средняя (5 баллов)
