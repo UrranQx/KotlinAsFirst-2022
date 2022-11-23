@@ -84,7 +84,7 @@ fun deleteMarked(inputName: String, outputName: String) {
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val ans = mutableMapOf<String, Int>()
 
-    val strings = substrings
+    val strings = substrings.toSet()
 // Алгос 1. Тупой перебор
 // Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
     val allStrings = File(inputName).readLines().map { it.lowercase() }.joinToString("")
