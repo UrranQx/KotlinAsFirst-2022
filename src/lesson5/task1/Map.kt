@@ -117,8 +117,8 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    for (i in a.keys) {
-        if (a[i] != b[i]) return false
+    for ((key, value) in a) {
+        if (value != b[key]) return false
     }
     return true
 }
@@ -254,7 +254,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     var cheapestStuff: String? = null
     var mn: Double = Double.MAX_VALUE
     for ((key, value) in stuff) {
-        if (value.first.equals(kind)) {
+        if (value.first == kind) {
             if (value.second <= mn) { //мы без понятия от нас требуют первый такой попавшийся товар или последний.
                 // зато при <=mn тесты проходят, когда вкидывают минимум - Double.MAX_VALUE
                 cheapestStuff = key
@@ -278,7 +278,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val letters = mutableSetOf<Char>()
     for (i in 0 until word.length) letters.add(word[i].lowercaseChar())
 //    println("${setOf(chars)}, $letters")
-    return if (word.isEmpty()) true else (chars.map { it.lowercaseChar() }.toSet()).containsAll(letters)
+    return (chars.map { it.lowercaseChar() }.toSet()).containsAll(letters)
 }
 
 /**
@@ -315,19 +315,23 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    fun toSetOfChars(stringOfChars: String): Set<Char> {
-        val letters = mutableSetOf<Char>()
-        for (element in stringOfChars) letters.add(element)
-        return letters
-    }
+//    fun toSetOfChars(stringOfChars: String): Set<Char> {
+//        val letters = mutableSetOf<Char>()
+//        for (element in stringOfChars) letters.add(element)
+//        return letters
+//    }
+//
+//    fun toListOfChars(stringOfChars: String): List<String> {
+//        val letters = mutableListOf<String>()
+//        for (element in stringOfChars) letters.add(element.toString())
+//        return letters
+//    }
 
-    fun toListOfChars(stringOfChars: String): List<String> {
-        val letters = mutableListOf<String>()
-        for (element in stringOfChars) letters.add(element.toString())
-        return letters
-    }
+    val anagrams =
+        words.map {
+            listOf(it.map { char -> char.toString() }.toSet(), extractRepeats(it.map { char -> char.toString() }))
+        }.toSet().size
 
-    val anagrams = (words.map { it -> listOf(toSetOfChars(it), extractRepeats(toListOfChars(it))) }).toSet().size
     return words.size != anagrams
 }
 
@@ -458,11 +462,10 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {// по веритикали- список предметов
-    if (treasures.size == 0) return emptySet() // вырожденный случай
-    val table: Array<Array<Pair<Int, MutableSet<String>>>> =
-        Array(treasures.size) {
-            Array<Pair<Int, MutableSet<String>>>(capacity + 1) { Pair(0, mutableSetOf()) }
-        } // по горизонтали - Вес
+    if (treasures.isEmpty()) return emptySet() // вырожденный случай
+    val table = Array(treasures.size) {
+        Array<Pair<Int, MutableSet<String>>>(capacity + 1) { Pair(0, mutableSetOf()) }
+    } // по горизонтали - Вес
     // а внутри Пара - Мак. сумма, к этому весу, если взять все элементы от 0 до этого, + Множество названий пердметов,
     // которые мы взяли для такой суммы
     // - ? Почему size:capacity + 1 ? - потому что нумерация начинается с нуля, и мы будем считать возможным
