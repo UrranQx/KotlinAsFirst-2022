@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.StringBuilder
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -87,7 +88,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     val strings = substrings.toSet()
 // Алгос 1. Тупой перебор
 // Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
-    val allStrings = File(inputName).readLines().map { it.lowercase() }.joinToString("\n")
+    val allStrings = File(inputName).readLines().joinToString("\n") { it.lowercase() }
     for (string in strings) { //m - кол-во подстрок
         for (i in 0 until allStrings.length - string.length + 1) { //n - l
             if (allStrings.substring(i, i + string.length) == string.lowercase()) { //проходка по l чарам
@@ -128,7 +129,27 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val prefixes = setOf("ж", "ч", "ш", "щ")
+    val postfixesSet = setOf("Ы", "Я", "Ю")
+    val postfixesMap = mapOf("Ы" to "И", "Я" to "А", "Ю" to "У")
+    val writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        if (line.isEmpty()) continue
+        val correctionLine = StringBuilder().append(line.first())
+        for (i in 0 until line.length - 1) {
+            if (line[i].lowercase() in prefixes && line[i + 1].uppercase() in postfixesSet) {
+                // значит мы наткнулись на ошибочное написание гласной после шипящей
+                val nextcase =
+                    if (line[i + 1].isUpperCase()) postfixesMap[line[i + 1].uppercase()]
+                    else postfixesMap[line[i + 1].uppercase()]!!.lowercase()
+                correctionLine.append(nextcase)
+            } else correctionLine.append(line[i + 1])
+        }
+        writer.write(correctionLine.toString())
+        writer.newLine()
+    }
+    writer.close()
+
 }
 
 /**
