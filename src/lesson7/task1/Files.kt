@@ -129,20 +129,20 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    val prefixes = setOf("ж", "ч", "ш", "щ")
-    val postfixesSet = setOf("Ы", "Я", "Ю")
+    val prefixes = setOf("ж", "ч", "ш", "щ", "Ж", "Ч", "Ш", "Щ")
+    val postfixesSet = setOf("ы", "я", "ю", "Ы", "Я", "Ю")
     val postfixesMap = mapOf("Ы" to "И", "Я" to "А", "Ю" to "У")
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
         if (line.isEmpty()) continue
         val correctionLine = StringBuilder().append(line.first())
         for (i in 0 until line.length - 1) {
-            if (line[i].lowercase() in prefixes && line[i + 1].uppercase() in postfixesSet) {
+            if (line[i].toString() in prefixes && line[i + 1].toString() in postfixesSet) {
                 // значит мы наткнулись на ошибочное написание гласной после шипящей
-                val nextcase =
+                val nextCase =
                     if (line[i + 1].isUpperCase()) postfixesMap[line[i + 1].uppercase()]
                     else postfixesMap[line[i + 1].uppercase()]!!.lowercase()
-                correctionLine.append(nextcase)
+                correctionLine.append(nextCase)
             } else correctionLine.append(line[i + 1])
         }
         writer.write(correctionLine.toString())
@@ -225,7 +225,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  *
  */
 fun top20Words(inputName: String): Map<String, Int> = TODO()
-
+// Самое сложное - достать слова из текста, дальше уже, как мы организуем мапу\массив для них -
+// дело структурирования данных(где-то давно решенная задача)
 /**
  * Средняя (14 баллов)
  *
