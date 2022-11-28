@@ -138,9 +138,9 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *     -> a changes to mutableMapOf() aka becomes empty
  */
 fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
-    for (i in b.keys) {
-        if (a[i] == b[i])
-            a.remove(i)
+    for ((key, value) in b){
+        if (a[key] == value)
+            a.remove(key)
     }
 }
 
@@ -151,23 +151,19 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    return a.intersect(b.toSet()).toList()
-    //val ans = mutableListOf<String>()
-    //a.toSet()
-    //b.toSet()
-    //
-    //    val boundary = minOf(a.size, b.size)
-    //
-    //    for (i in 0 until boundary) {
-    //        if (a[i] in b) {
-    //            ans.add(a[i])
-    //        }
-    //    }
-    //return ans.toList()
-
-
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b.toSet()).toList()
+//val ans = mutableListOf<String>()
+//a.toSet()
+//b.toSet()
+//
+//    val boundary = minOf(a.size, b.size)
+//
+//    for (i in 0 until boundary) {
+//        if (a[i] in b) {
+//            ans.add(a[i])
+//        }
+//    }
+//return ans.toList()
 
 /**
  * Средняя (3 балла)
@@ -266,7 +262,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean =
-    (chars.map { it.lowercaseChar() }.toSet()).containsAll(word.lowercase().toSet())
+    chars.map { it.lowercaseChar() }.toSet().containsAll(word.lowercase().toSet())
 /*{
     val letters = mutableSetOf<Char>()
     for (i in 0 until word.length) letters.add(word[i].lowercaseChar())

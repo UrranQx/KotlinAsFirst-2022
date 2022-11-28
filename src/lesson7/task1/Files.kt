@@ -66,7 +66,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun deleteMarked(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
-        if (line.isNotEmpty()) if (line.first().toString() == "_") continue
+        if (line.startsWith("_")) continue
         writer.write(line)
         writer.newLine()
     }
@@ -84,16 +84,16 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val ans = mutableMapOf<String, Int>()
-
     val strings = substrings.toSet()
-// Алгос 1. Тупой перебор
-// Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
+    // Алгос 1. Тупой перебор
+    // Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
     val allStrings = File(inputName).readLines().joinToString("\n") { it.lowercase() }
     for (string in strings) { //m - кол-во подстрок
-        for (i in 0 until allStrings.length - string.length + 1) { //n - l
-            if (allStrings.substring(i, i + string.length) == string.lowercase()) { //проходка по l чарам
-                ans[string] = 1 + (ans[string] ?: 0) // 1
-            }
+        val stringLowercased = string.lowercase()
+        var startPos = allStrings.indexOf(stringLowercased, 0)
+        while (-1 < startPos && startPos < allStrings.length - string.length + 1) {
+            ans[string] = 1 + (ans[string] ?: 0) // 1
+            startPos = allStrings.indexOf(stringLowercased, startPos + 1)
         }
         if (ans[string] == null) ans[string] = 0 //1
     }
