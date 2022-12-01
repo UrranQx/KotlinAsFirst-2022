@@ -213,8 +213,7 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     val strLowercased = str.lowercase()
-    val word = Regex("""([^(\s|\d)]+)\s\1""").find(strLowercased)?.value ?: return -1
-    return strLowercased.indexOf(word)
+    return Regex("""(\S+)\s\1""").find(strLowercased)?.range?.first ?: -1
 }
 
 /**
@@ -230,8 +229,8 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     var mx = "" to -1.0 //Pair<String, Double>
-    if (!description.matches(Regex("""^(([^(\s|\d)]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
-    for (i in Regex("""([^(\s|\d)]+\s+(\d+(\.\d+)?))""").findAll(description)) {
+    if (!description.matches(Regex("""^((\S+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
+    for (i in Regex("""(\S+\s+(\d+(\.\d+)?))""").findAll(description)) {
         val temp = i.value.split(Regex("""\s"""))
         if (temp[1].toDouble() > mx.second) mx = Pair(temp[0], temp[1].toDoubleOrNull() ?: 0.0)
     }
@@ -250,7 +249,8 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int = TODO()
-
+// Будем считать, что пользователь пока что если и тупит в написании римских цифр, то когда использует совершенно не тот
+// алфавит
 /**
  * Очень сложная (7 баллов)
  *
