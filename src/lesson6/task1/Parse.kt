@@ -130,16 +130,8 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val whiteList = setOf(" ", "+", "-", "(", ")")
-    val ans = StringBuilder()
-    for (i in phone.indices) {
-        val char = phone[i]
-        ans.append(if (char.isDigit() || char.toString() == "+") char else "")
-        val nextChar = if (i < phone.length - 1) phone[i + 1] else 'a'
-        if (!(char.isDigit() || whiteList.contains(char.toString()))) return ""
-        if (char.toString() == "(" && !nextChar.isDigit()) return ""
-    }
-    return ans.toString()
+    if (!phone.matches(Regex("""^\+?(\d|\s|-|\(\d|\))+"""))) return ""
+    return Regex("""(\s|-|\(|\))""").split(phone).joinToString("")
 }
 // Если есть скобки, но в них пусто -> emptyString
 // Было выяснено, что после "(" должна следовать цифра
