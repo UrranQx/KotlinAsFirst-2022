@@ -229,8 +229,8 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     var mx = "" to -1.0 //Pair<String, Double>
-    if (!description.matches(Regex("""^((\S+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
-    for (i in Regex("""(\S+\s+(\d+(\.\d+)?))""").findAll(description)) {
+    if (!description.matches(Regex("""^(([^(\s|;)]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
+    for (i in Regex("""([^(\s|;)]+\s+(\d+(\.\d+)?))""").findAll(description)) {
         val temp = i.value.split(Regex("""\s"""))
         if (temp[1].toDouble() > mx.second) mx = Pair(temp[0], temp[1].toDoubleOrNull() ?: 0.0)
     }
