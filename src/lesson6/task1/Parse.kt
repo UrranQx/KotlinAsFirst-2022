@@ -168,7 +168,13 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    var mx = -1
+    if (!jumps.matches(Regex("""^\d+(\d+|%|\s|\+|-)+"""))) return mx
+    for (i in Regex("""(\d+)(\s?+\+)""").findAll(jumps)) mx = maxOf(mx, i.groupValues[1].toIntOrNull() ?: 0)
+    //mx = maxOf(mx, Regex("""\d+""").find(i.value)?.value?.toInt() ?: 0) - это быстрее на 3мс чем .groupValues
+    return mx
+}
 
 /**
  * Сложная (6 баллов)
