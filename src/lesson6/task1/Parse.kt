@@ -213,17 +213,8 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     val strLowercased = str.lowercase()
-    var j = 0
-    val tempList = Regex("""\s""").split(strLowercased)
-    var previous = tempList[0]
-    for (i in 1 until tempList.size) { //Тут лучше использовать capture groups
-        if (previous == tempList[i]) return Regex(previous).find(strLowercased, j)?.range?.first ?: -1
-        else {
-            j += previous.length
-            previous = tempList[i]
-        }
-    }
-    return -1
+    val word = Regex("""([^(\s|\d)]+)\s\1""").find(strLowercased)?.value ?: return -1
+    return strLowercased.indexOf(word)
 }
 
 /**
@@ -239,8 +230,8 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     var mx = "" to -1.0 //Pair<String, Double>
-    if (!description.matches(Regex("""^(([А-яA-z]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
-    for (i in Regex("""([А-яA-z]+\s+(\d+(\.\d+)?))""").findAll(description)) {
+    if (!description.matches(Regex("""^(([^(\s|\d)]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
+    for (i in Regex("""([^(\s|\d)]+\s+(\d+(\.\d+)?))""").findAll(description)) {
         val temp = i.value.split(Regex("""\s"""))
         if (temp[1].toDouble() > mx.second) mx = Pair(temp[0], temp[1].toDoubleOrNull() ?: 0.0)
     }
