@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.lang.IllegalArgumentException
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -185,7 +186,21 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    if (!expression.matches(Regex("""^\d+(\s[-+]\s\d+)*"""))) throw IllegalArgumentException()
+    val tempList = Regex("""\s""").split(expression)
+    var s = tempList[0].toIntOrNull() ?: 0
+    var k = 1
+    for (i in 1 until tempList.size) {
+        if (tempList[i].toIntOrNull() != null) s += k * tempList[i].toInt()
+        else when (tempList[i]) {
+            "-" -> k = -1
+            "+" -> k = 1
+            else -> continue
+        }
+    }
+    return s
+}
 
 /**
  * Сложная (6 баллов)
