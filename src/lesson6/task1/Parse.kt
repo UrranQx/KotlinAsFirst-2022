@@ -212,11 +212,11 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    var previous = ""
     val strLowercased = str.lowercase()
     var j = 0
     val tempList = Regex("""\s""").split(strLowercased)
-    for (i in tempList.indices) { //Тут лучше использовать capture groups
+    var previous = tempList[0]
+    for (i in 1 until tempList.size) { //Тут лучше использовать capture groups
         if (previous == tempList[i]) return Regex(previous).find(strLowercased, j)?.range?.first ?: -1
         else {
             j += previous.length
@@ -238,11 +238,11 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    var mx = "" to Double.MIN_VALUE //Pair<String, Double>
-    if (!description.matches(Regex("""^(([а-яА-Я]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
-    for (i in Regex("""([а-яА-Я]+\s+(\d+(\.\d+)?))""").findAll(description)) {
+    var mx = "" to -1.0 //Pair<String, Double>
+    if (!description.matches(Regex("""^(([А-яA-z]+\s+(\d+(\.\d+)?))(; )*)*"""))) return ""
+    for (i in Regex("""([А-яA-z]+\s+(\d+(\.\d+)?))""").findAll(description)) {
         val temp = i.value.split(Regex("""\s"""))
-        if ((temp[1].toDoubleOrNull() ?: 0.0) > mx.second) mx = Pair(temp[0], temp[1].toDoubleOrNull() ?: 0.0)
+        if (temp[1].toDouble() > mx.second) mx = Pair(temp[0], temp[1].toDoubleOrNull() ?: 0.0)
     }
     return mx.first
 }
