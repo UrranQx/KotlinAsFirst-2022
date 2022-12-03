@@ -249,24 +249,28 @@ fun mostExpensive(description: String): String {
 fun fromRoman(roman: String): Int {
     var ans = 0
     val alph = "IVXLCDM"
-    if (!roman.matches(Regex("""[$alph]+"""))) return -1
+    if (!roman.matches(Regex("""[$alph]+"""))) return -1 //проверка на правильность строки.
+    //*Создание ассоциативного массива, но не руками
     val table = mutableMapOf<Char, Int>()
     var decimal = 1
     for (i in alph.indices) {
         decimal *= (5 * (i % 2) + 2 * (1 - i % 2))
         table[alph[i]] = (decimal / 2)
     }
+    //*
     val arabic = mutableListOf<Int>()
     for (i in roman) arabic.add(table[i]!!)
     // получая на вход данные, надо ассоциировать каждый символ на цифру
     //println(arabic)
     for (i in arabic.indices) {
-        ans += arabic[i] - (if (i > 0 && arabic[i - 1] < arabic[i]) 2 * arabic[i - 1] else 0)
+        ans += arabic[i] - (if (i > 0 && arabic[i - 1] < arabic[i]) 2 * arabic[i - 1] else 0) //сам алгоритм
     }
     return ans
 }
-// Будем считать, что пользователь пока что если и тупит в написании римских цифр, то когда использует совершенно не тот
-// алфавит
+// Будем считать, что пользователь пока что ЕСЛИ и тупит в написании римских цифр, то он уже использует совершенно
+// не тот алфавит
+// ДАННОЕ РЕШЕНИЕ И ТЕСТЫ на kotoed не учитывают ошибку ввода римских цифр: строка "CCMMIIXIXV" не должна обрабатываться
+// а в моем решении она прошла бы проверку
 /**
  * Очень сложная (7 баллов)
  *
