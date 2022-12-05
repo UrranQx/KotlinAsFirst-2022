@@ -4,6 +4,7 @@ package lesson7.task1
 
 import java.io.File
 import java.lang.StringBuilder
+import kotlin.math.max
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -170,14 +171,28 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val strings = File(inputName).readLines().map { it.trim() }
+    val maxLength = strings.maxOfOrNull { it.length } ?: 0
+    for (str in strings) {
+        val centeredStr = StringBuilder()
+        val k = maxLength - str.length
+        val left = k / 2 //хитрая штука с целочисленным делением
+        centeredStr.append(" ".repeat(left), str)
+        writer.write(centeredStr.toString())
+        writer.newLine()
+    }
+    writer.close()
+
+
 }
 // Найти самую длинную строку
 // Пусть длина рандомной строки - x
 // тогда надо добавить слево и справо по S пустых строк; k= (x-len(str)); S = k/2; left = S; right = S
-// Если k%2==1: left --
-// final str = right + S + left
+// //Если k%2==1: left -- (Неверно, это не работает, как должно)
+// final str = left + S + right
 // Последний шаг - использовать StringBuilder
+// если будут какие-то ошибки с Input Output, то придется использовать либо .use либо try {...} finally {writer.close())
 
 /**
  * Сложная (20 баллов)
