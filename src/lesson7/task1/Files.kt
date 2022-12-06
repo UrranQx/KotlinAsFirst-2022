@@ -221,8 +221,27 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
+    val maxLength = lines.maxOfOrNull { it.length } ?: 0
+    for (line in lines) {
+        val words = line.split(Regex("""\s""")).filter { it.isNotEmpty() }
+        val wordsCount = words.size // слов n штук, тогда между ними (n - 1) пробелов
+        var s = maxLength - words.sumOf { it.length } //всего места под пробелы = sum of gaps
+        val fixedLine = StringBuilder()
+        for (i in 0 until words.size - 1) {
+            val k = (s / (wordsCount - 1 - i))
+            val gap = if (s % (wordsCount - 1 - i) == 0) k else k + 1
+            fixedLine.append(words[i], " ".repeat(gap))
+            s -= gap
+        }
+        if (line.isNotEmpty()) fixedLine.append(words[wordsCount - 1])//ласт слово отдельно , т.к нет пробелов после
+        writer.write(fixedLine.toString())
+        writer.newLine()
+    }
+    writer.close()
 }
+// Каждую строчку сплитуем по пробелу, используя Regex("""\s+""").split(string)
 // Найти самую длинную строку (делаем так, чтобы там не было сдвоенных пробелов) и она и задаст нужную длинну
 // Дальше мы проходимся по строкам снова
 // Мы считаем сколько пространства занимают слова, следовательно можем узнать, сколько надо на пробелы
@@ -230,8 +249,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
 // l - maxLength; wordsCount; wordsLength; k - amount of spaces in each gap;  s = l - wordsLength
 //
 // for each Gap:
-//     k = (s / (wordsCount - 1)).toInt()//Будем надеяться что .toInt() не округляет, а просто отбрасывает дробную часть
-//     gap_j = if (s % (wordsCount - 1 - j) == 0) k else k + 1
+//     k = (s / (wordsCount - 1 - i)).toInt()//Будем надеяться что .toInt() не округляет, а просто отбрасывает дробную часть
+//     gap_j = if (s % (wordsCount - 1 - i) == 0) k else k + 1
 //     // в line.StringBuilder() аппендим не только слово, но и пробелы после него.
 //     // Или если у нас уже строка разбита на слова в листе, то придется идти от i = 1  с шагом 2
 //     s = s - gap_j
