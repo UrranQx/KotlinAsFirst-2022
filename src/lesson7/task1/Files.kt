@@ -624,7 +624,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             leftOver = newRes - mult
             writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
             writer.newLine()
-            writer.write(makeDivString(caret, dNum(mult)))
+            writer.write(makeDivString(caret, maxOf(dNum(mult),dNum(newRes) - 1)))
             writer.newLine()
             //
             writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
