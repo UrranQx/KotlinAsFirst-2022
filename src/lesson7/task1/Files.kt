@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import java.io.BufferedWriter
 import lesson3.task1.digitNumber as dNum
 import java.io.File
 import java.lang.StringBuilder
@@ -593,13 +594,32 @@ fun makeDivString(caret: Int, multLength: Int): String {
 }
 
 fun makeSpaces(caret: Int, str: String): String = StringBuilder(" ".repeat(caret - 1)).append(str).toString()
+fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter){
+    // Какие приколы есть, когда у нас число при делении является представлением 0.(X)
+    // 1 - Первая строка не начинается с пробела
+    //println("$lhv $rhv ${lhv / rhv}")
+    val firstLine = "$lhv | $rhv"
+    val res = "0"
+    writer.write(firstLine)
+    writer.newLine()
+    val caret = dNum(lhv)
+    val secondLine = StringBuilder()
+    writer.write(secondLine.append(makeSpaces(caret - 1, "-0"), " ".repeat(3), res).toString())
+    writer.newLine()
+    writer.write(makeDivString(caret, dNum(lhv) - 1))
+    writer.newLine()
+    writer.write(lhv.toString())
+
+}
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
+        val res = (lhv / rhv).toString()
+        if (rhv > lhv && dNum(lhv) > 3) return@use zeroCaseScenario(lhv, rhv, writer)
         val firstLine = " $lhv | $rhv"
         writer.write(firstLine)
         writer.newLine()
         //
-        val res = (lhv / rhv).toString()
+
         //val finalLeftover = lhv % rhv
         var mult = res[0].digitToInt() * rhv
         var caret = dNum(mult) + 1
@@ -624,7 +644,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
             leftOver = newRes - mult
             writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
             writer.newLine()
-            writer.write(makeDivString(caret, maxOf(dNum(mult),dNum(newRes) - 1)))
+            writer.write(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)))
             writer.newLine()
             //
             writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
