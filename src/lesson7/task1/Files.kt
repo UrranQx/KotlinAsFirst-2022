@@ -606,7 +606,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     writer.newLine()
     val upperdigits = firstLine.substring(1, mult.toString().length + 1)
     var leftOver = upperdigits.toInt() - mult
-    writer.write(makeSpaces(caret, leftOver.toString()))
+    writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
     // newRes = leftOver * 10 + firstLine[caret].digitToInt()
     if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
     caret += 1
