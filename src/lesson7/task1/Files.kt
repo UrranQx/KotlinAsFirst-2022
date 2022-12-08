@@ -226,7 +226,7 @@ fun centerFile(inputName: String, outputName: String) {
 fun alignFileByWidth(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
-        //ленивое убирание сдвоенных, строенных и т.д. пробелов
+        //ресурсоёмкое по памяти убирание сдвоенных, строенных и т.д. пробелов
         val maxLength = lines.maxOfOrNull { it.length } ?: 0
         for (line in lines) {
             val words = line.split(Regex("""\s""")).filter { it.isNotEmpty() }
