@@ -64,14 +64,16 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Все остальные строки должны быть перенесены без изменений, включая пустые строки.
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
+//File(outputName).bufferedWriter().use
 fun deleteMarked(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        if (line.startsWith("_")) continue
-        writer.write(line)
-        writer.newLine()
+    File(outputName).bufferedWriter().use { writer ->
+        for (line in File(inputName).readLines()) {
+            if (line.startsWith("_")) continue
+            writer.write(line)
+            writer.newLine()
+        }
+//        writer.close()
     }
-    writer.close()
 }
 
 /**
@@ -129,28 +131,28 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  * Исключения (жюри, брошюра, парашют) в рамках данного задания обрабатывать не нужно
  *
  */
+val prefixes = setOf("ж", "ч", "ш", "щ", "Ж", "Ч", "Ш", "Щ")
+val postfixesSet = setOf("ы", "я", "ю", "Ы", "Я", "Ю")
+val postfixesMap = mapOf("Ы" to "И", "Я" to "А", "Ю" to "У")
 fun sibilants(inputName: String, outputName: String) {
-    val prefixes = setOf("ж", "ч", "ш", "щ", "Ж", "Ч", "Ш", "Щ")
-    val postfixesSet = setOf("ы", "я", "ю", "Ы", "Я", "Ю")
-    val postfixesMap = mapOf("Ы" to "И", "Я" to "А", "Ю" to "У")
-    val writer = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        if (line.isEmpty()) continue
-        val correctionLine = StringBuilder().append(line.first())
-        for (i in 0 until line.length - 1) {
-            if (line[i].toString() in prefixes && line[i + 1].toString() in postfixesSet) {
-                // значит мы наткнулись на ошибочное написание гласной после шипящей
-                val nextCase =
-                    if (line[i + 1].isUpperCase()) postfixesMap[line[i + 1].uppercase()]
-                    else postfixesMap[line[i + 1].uppercase()]!!.lowercase()
-                correctionLine.append(nextCase)
-            } else correctionLine.append(line[i + 1])
+    File(outputName).bufferedWriter().use { writer ->
+        for (line in File(inputName).readLines()) {
+            if (line.isEmpty()) continue
+            val correctionLine = StringBuilder().append(line.first())
+            for (i in 0 until line.length - 1) {
+                if (line[i].toString() in prefixes && line[i + 1].toString() in postfixesSet) {
+                    // значит мы наткнулись на ошибочное написание гласной после шипящей
+                    val nextCase =
+                        if (line[i + 1].isUpperCase()) postfixesMap[line[i + 1].uppercase()]
+                        else postfixesMap[line[i + 1].uppercase()]!!.lowercase()
+                    correctionLine.append(nextCase)
+                } else correctionLine.append(line[i + 1])
+            }
+            writer.write(correctionLine.toString())
+            writer.newLine()
         }
-        writer.write(correctionLine.toString())
-        writer.newLine()
+//        writer.close()
     }
-    writer.close()
-
 }
 
 /**
@@ -171,20 +173,20 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    val strings = File(inputName).readLines().map { it.trim() }
-    val maxLength = strings.maxOfOrNull { it.length } ?: 0
-    for (str in strings) {
-        val centeredStr = StringBuilder()
-        val k = maxLength - str.length
-        val left = k / 2 //хитрая штука с целочисленным делением
-        centeredStr.append(" ".repeat(left), str)
-        writer.write(centeredStr.toString())
-        writer.newLine()
+    File(outputName).bufferedWriter().use { writer ->
+        val strings = File(inputName).readLines().map { it.trim() }
+        val maxLength = strings.maxOfOrNull { it.length } ?: 0
+        for (str in strings) {
+            val centeredStr = StringBuilder()
+            val k = maxLength - str.length
+            val left = k / 2 //хитрая штука с целочисленным делением
+            centeredStr.append(" ".repeat(left), str)
+            writer.write(centeredStr.toString())
+            writer.newLine()
+        }
+//        writer.close()
+
     }
-    writer.close()
-
-
 }
 // Найти самую длинную строку
 // Пусть длина рандомной строки - x
@@ -222,26 +224,27 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
-    //ленивое убирание сдвоенных, строенных и т.д. пробелов
-    val maxLength = lines.maxOfOrNull { it.length } ?: 0
-    for (line in lines) {
-        val words = line.split(Regex("""\s""")).filter { it.isNotEmpty() }
-        val wordsCount = words.size // слов n штук, тогда между ними (n - 1) пробелов
-        var s = maxLength - words.sumOf { it.length } //всего места под пробелы = sum of gaps
-        val fixedLine = StringBuilder()
-        for (i in 0 until words.size - 1) {
-            val k = (s / (wordsCount - 1 - i))
-            val gap = if (s % (wordsCount - 1 - i) == 0) k else k + 1
-            fixedLine.append(words[i], " ".repeat(gap))
-            s -= gap
+    File(outputName).bufferedWriter().use { writer ->
+        val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
+        //ленивое убирание сдвоенных, строенных и т.д. пробелов
+        val maxLength = lines.maxOfOrNull { it.length } ?: 0
+        for (line in lines) {
+            val words = line.split(Regex("""\s""")).filter { it.isNotEmpty() }
+            val wordsCount = words.size // слов n штук, тогда между ними (n - 1) пробелов
+            var s = maxLength - words.sumOf { it.length } //всего места под пробелы = sum of gaps
+            val fixedLine = StringBuilder()
+            for (i in 0 until words.size - 1) {
+                val k = (s / (wordsCount - 1 - i))
+                val gap = if (s % (wordsCount - 1 - i) == 0) k else k + 1
+                fixedLine.append(words[i], " ".repeat(gap))
+                s -= gap
+            }
+            if (line.isNotEmpty()) fixedLine.append(words[wordsCount - 1])//ласт слово отдельно , т.к нет пробелов после
+            writer.write(fixedLine.toString())
+            writer.newLine()
         }
-        if (line.isNotEmpty()) fixedLine.append(words[wordsCount - 1])//ласт слово отдельно , т.к нет пробелов после
-        writer.write(fixedLine.toString())
-        writer.newLine()
+//        writer.close()
     }
-    writer.close()
 }
 // Каждую строчку сплитуем по пробелу, используя Regex("""\s+""").split(string)
 // Найти самую длинную строку (делаем так, чтобы там не было сдвоенных пробелов) и она и задаст нужную длинну
@@ -590,45 +593,45 @@ fun makeDivString(caret: Int, multLength: Int): String {
 
 fun makeSpaces(caret: Int, str: String): String = StringBuilder(" ".repeat(caret - 1)).append(str).toString()
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    val firstLine = " $lhv | $rhv"
-    writer.write(firstLine)
-    writer.newLine()
-    //
-    val res = (lhv / rhv).toString()
-    //val finalLeftover = lhv % rhv
-    var mult = res[0].digitToInt() * rhv
-    var caret = dNum(mult) + 1
-    val secondLine = StringBuilder()
-    writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3), res).toString())
-    writer.newLine()
-    writer.write(makeDivString(caret, dNum(mult)))
-    writer.newLine()
-    val upperdigits = firstLine.substring(1, mult.toString().length + 1)
-    var leftOver = upperdigits.toInt() - mult
-    writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
-    // newRes = leftOver * 10 + firstLine[caret].digitToInt()
-    if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
-    caret += 1
-    writer.newLine()
-    for (i in 1 until res.length) {
-        val newRes = leftOver * 10 + firstLine[caret - 1].digitToInt()
-        //println(res[i])
-        //println(firstLine[caret])
-
-        mult = res[i].digitToInt() * rhv
-        leftOver = newRes - mult
-        writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
+    File(outputName).bufferedWriter().use { writer ->
+        val firstLine = " $lhv | $rhv"
+        writer.write(firstLine)
+        writer.newLine()
+        //
+        val res = (lhv / rhv).toString()
+        //val finalLeftover = lhv % rhv
+        var mult = res[0].digitToInt() * rhv
+        var caret = dNum(mult) + 1
+        val secondLine = StringBuilder()
+        writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3), res).toString())
         writer.newLine()
         writer.write(makeDivString(caret, dNum(mult)))
         writer.newLine()
-        //
+        val upperdigits = firstLine.substring(1, mult.toString().length + 1)
+        var leftOver = upperdigits.toInt() - mult
         writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
+        // newRes = leftOver * 10 + firstLine[caret].digitToInt()
         if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
-        caret +=1
+        caret += 1
         writer.newLine()
+        for (i in 1 until res.length) {
+            val newRes = leftOver * 10 + firstLine[caret - 1].digitToInt()
+            //println(res[i])
+            //println(firstLine[caret])
+
+            mult = res[i].digitToInt() * rhv
+            leftOver = newRes - mult
+            writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
+            writer.newLine()
+            writer.write(makeDivString(caret, dNum(mult)))
+            writer.newLine()
+            //
+            writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
+            if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
+            caret += 1
+            writer.newLine()
+        }
     }
-    writer.close()
 }
 
 

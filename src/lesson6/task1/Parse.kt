@@ -78,13 +78,14 @@ fun main() {
  * входными данными.
  */
 //fun isIntCheck(chars: String): Boolean = chars.all { it.isDigit() }
+val months = mapOf(
+    "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
+    "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
+)
+
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
     if (parts.size != 3) return ""
-    val months = mapOf<String, Int>(
-        "января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
-        "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12
-    )
     val day = parts[0].toIntOrNull() ?: return ""
     val month = months[parts[1]] ?: return ""
     val year = parts[2].toIntOrNull() ?: return ""
@@ -105,10 +106,7 @@ fun dateStrToDigit(str: String): String {
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
     if (parts.size != 3) return ""
-    val digitToMonth = mapOf<Int, String>(
-        1 to "января", 2 to "февраля", 3 to "марта", 4 to "апреля", 5 to "мая", 6 to "июня",
-        7 to "июля", 8 to "августа", 9 to "сентября", 10 to "октября", 11 to "ноября", 12 to "декабря"
-    )
+    val digitToMonth = months.entries.associate { (k, v) -> v to k }
     val day = parts[0].toIntOrNull() ?: return ""
     val month = digitToMonth[parts[1].toInt()] ?: return ""
     val year = parts[2].toIntOrNull() ?: return ""
@@ -154,7 +152,9 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     var mx = -1
     if (!jumps.matches(Regex("""^\d+(\s|-|%|\d+)*"""))) return mx
-    for (i in Regex("""(\s|-|%)+""").split(jumps)) mx = maxOf(mx, i.toIntOrNull() ?: 0)
+    for (i in Regex("""(\s|-|%)+""").split(jumps)) {
+        mx = maxOf(mx, i.toIntOrNull() ?: 0)
+    }
     return mx
 }
 
@@ -172,7 +172,9 @@ fun bestLongJump(jumps: String): Int {
 fun bestHighJump(jumps: String): Int {
     var mx = -1
     if (!jumps.matches(Regex("""^\d+(\d+|%|\s|\+|-)+"""))) return mx
-    for (i in Regex("""(\d+)(\s?+\+)""").findAll(jumps)) mx = maxOf(mx, i.groupValues[1].toIntOrNull() ?: 0)
+    for (i in Regex("""(\d+)(\s?+\+)""").findAll(jumps)) {
+        mx = maxOf(mx, i.groupValues[1].toIntOrNull() ?: 0)
+    }
     //mx = maxOf(mx, Regex("""\d+""").find(i.value)?.value?.toInt() ?: 0) - это быстрее на 3мс чем .groupValues
     return mx
 }
@@ -189,10 +191,11 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     if (!expression.matches(Regex("""^\d+(\s[-+]\s\d+)*"""))) throw IllegalArgumentException()
     val tempList = Regex("""\s""").split(expression) //тут n
-    var s = tempList[0].toIntOrNull() ?: 0
     var k = 1
-    for (i in 1 until tempList.size) { // еще тут n ¯\_(ツ)_/¯
-        if (tempList[i].toIntOrNull() != null) s += k * tempList[i].toInt()
+    var s = 0
+    for (i in tempList.indices) { // еще тут n ¯\_(ツ)_/¯
+        val temp = tempList[i].toIntOrNull()
+        if (temp != null) s += k * temp
         else when (tempList[i]) {
             "-" -> k = -1
             "+" -> k = 1
