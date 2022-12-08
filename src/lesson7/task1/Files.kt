@@ -614,7 +614,7 @@ fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter){
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         val res = (lhv / rhv).toString()
-        if (rhv > lhv && dNum(lhv) > 2) return@use zeroCaseScenario(lhv, rhv, writer)
+        if (rhv > lhv && dNum(lhv) > 1) return@use zeroCaseScenario(lhv, rhv, writer)
         val firstLine = " $lhv | $rhv"
         writer.write(firstLine)
         writer.newLine()
