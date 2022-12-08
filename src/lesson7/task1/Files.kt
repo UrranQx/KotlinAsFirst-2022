@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import lesson3.task1.digitNumber as dNum
 import java.io.File
 import java.lang.StringBuilder
 
@@ -359,7 +360,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     TODO()
 }
-
+// Все буквы разные, значит если str.length != str.toSet().size()// с учетом того, что все в одном регистре
 /**
  * Сложная (22 балла)
  *
@@ -582,9 +583,62 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
-fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+fun makeDivString(caret: Int, multLength: Int): String {
+    val str = StringBuilder(" ".repeat(caret - multLength - 1))
+    return str.append("-".repeat(multLength + 1)).toString()
 }
+
+fun makeSpaces(caret: Int, str: String): String = StringBuilder(" ".repeat(caret - 1)).append(str).toString()
+fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
+    val writer = File(outputName).bufferedWriter()
+    val firstLine = " $lhv | $rhv"
+    writer.write(firstLine)
+    writer.newLine()
+    //
+    val res = (lhv / rhv).toString()
+    //val finalLeftover = lhv % rhv
+    var mult = res[0].digitToInt() * rhv
+    var caret = dNum(mult) + 1
+    val secondLine = StringBuilder()
+    writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3), res).toString())
+    writer.newLine()
+    writer.write(makeDivString(caret, dNum(mult)))
+    writer.newLine()
+    val upperdigits = firstLine.substring(1, mult.toString().length + 1)
+    var leftOver = upperdigits.toInt() - mult
+    writer.write(makeSpaces(caret, leftOver.toString()))
+    // newRes = leftOver * 10 + firstLine[caret].digitToInt()
+    if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
+    caret += 1
+    writer.newLine()
+    for (i in 1 until res.length) {
+        val newRes = leftOver * 10 + firstLine[caret - 1].digitToInt()
+        //println(res[i])
+        //println(firstLine[caret])
+
+        mult = res[i].digitToInt() * rhv
+        leftOver = newRes - mult
+        writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
+        writer.newLine()
+        writer.write(makeDivString(caret, dNum(mult)))
+        writer.newLine()
+        //
+        writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
+        if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
+        caret +=1
+        writer.newLine()
+    }
+    writer.close()
+}
+
+
+
+
+
+
+
+
+
 /**"""
               99999 | 1
              -9       99999
