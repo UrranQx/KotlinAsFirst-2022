@@ -557,16 +557,16 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     TODO()
 }
 /**"""
-                19935
-             *    111
-             --------
-                19935
-             + 19935
-             +19935
-             --------
-              2212785
-             """
-*/
+19935
+ *    111
+--------
+19935
++ 19935
++19935
+--------
+2212785
+"""
+ */
 
 /**
  * Сложная (25 баллов)
@@ -594,42 +594,80 @@ fun makeDivString(caret: Int, multLength: Int): String {
 }
 
 fun makeSpaces(caret: Int, str: String): String = StringBuilder(" ".repeat(caret - 1)).append(str).toString()
-fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter){
+fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter) {
     // Какие приколы есть, когда у нас число при делении является представлением 0.(X)
     // 1 - Первая строка не начинается с пробела
     //println("$lhv $rhv ${lhv / rhv}")
     val firstLine = "$lhv | $rhv"
-    val res = "0"
+    val res = (lhv / rhv)
+    val mult = res.toString().first().digitToInt() * rhv
     writer.write(firstLine)
     writer.newLine()
-    val caret = dNum(lhv)
+    val caret = dNum(lhv) - dNum(mult) + 1
     val secondLine = StringBuilder()
-    writer.write(secondLine.append(makeSpaces(caret - 1, "-0"), " ".repeat(3), res).toString())
+    writer.write(
+        secondLine.append(
+            makeSpaces(caret - 1, "-$mult"), " ".repeat(caret - dNum(lhv) + 3), res
+        ).toString()
+    )
     writer.newLine()
     writer.write(makeDivString(caret, dNum(lhv) - 1))
     writer.newLine()
     writer.write(lhv.toString())
 
 }
+
+//fun divideInLoop(
+//    lhv: Int, rhv: Int, writer: BufferedWriter,
+//    caret: Int, leftOver: Int, mult: Int, firstLine: String, res: String
+//) {
+//    for (i in 1 until res.length) {
+//        val newRes = leftOver * 10 + firstLine[caret - 1].digitToInt()
+//        //println(res[i])
+//        //println(firstLine[caret])
+//
+//        mult = res[i].digitToInt() * rhv
+//        leftOver = newRes - mult
+//        writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
+//        writer.newLine()
+//        writer.write(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)))
+//        writer.newLine()
+//        //
+//        writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
+//        if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
+//        caret += 1
+//        writer.newLine()
+//    }
+//}
+
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         val res = (lhv / rhv).toString()
+        var mult = res[0].digitToInt() * rhv
         if (rhv > lhv && dNum(lhv) > 1) return@use zeroCaseScenario(lhv, rhv, writer)
-        val firstLine = " $lhv | $rhv"
+        // МЫ ставим пробел перед первой строкой, если первое вычитаемое число, больше чем уменьшаемое
+        // из-за этого у нас есть два сценария в таком случае
+        //сценарий 1, где количество разрядов совпадает
+        var firstLine = " $lhv | $rhv"
+        var caret = dNum(mult) + 1
+        var spaceFixer1 = 0
+        val secondLine = StringBuilder()
+        var upperdigits = firstLine.substring(1, dNum(mult) + 1).toInt()
+        if (upperdigits < mult) {
+            firstLine = "$lhv | $rhv"
+            spaceFixer1 = -1
+            upperdigits = upperdigits * 10 + firstLine[dNum(mult)].digitToInt()
+        }
+        var leftOver = upperdigits - mult
+
         writer.write(firstLine)
         writer.newLine()
-        //
 
-        //val finalLeftover = lhv % rhv
-        var mult = res[0].digitToInt() * rhv
-        var caret = dNum(mult) + 1
-        val secondLine = StringBuilder()
-        writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3), res).toString())
+        writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3 + spaceFixer1), res).toString())
         writer.newLine()
         writer.write(makeDivString(caret, dNum(mult)))
         writer.newLine()
-        val upperdigits = firstLine.substring(1, mult.toString().length + 1)
-        var leftOver = upperdigits.toInt() - mult
+
         writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
         // newRes = leftOver * 10 + firstLine[caret].digitToInt()
         if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
@@ -654,61 +692,3 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-/**"""
-              99999 | 1
-             -9       99999
-             --
-              09
-              -9
-              --
-               09
-               -9
-               --
-                09
-                -9
-                --
-                 09
-                 -9
-                 --
-                  0
-             """
-/**"""
-              19935 | 22
-             -198     906
-             ----
-                13
-                -0
-                --
-                135
-               -132
-               ----
-                  3
-
-
- * как мы в принципе делим числа столбиком?
- * 1 шаг. пробел; написать числитель; пробел; "|" пробел; деноминатор(знаменатель)
- * 2 шаг. В координатах ниже знаменателя на 1 по Y будет первая цифра
- * Как подститать эту цифру - очевидно, но для начала надо взять первые цифры из числителя
- * Сколько брать?
- * если "\d(\d)?".toInt() < знаменателя, то берем еще одну следующую цифру.
- * Если взять следующую из числа  не можем(следующий разряд), то берем значит это наш остаток.
- * Осталось только его красиво вывести
- * 3 шаг. Под начальным числом выписываем "-${(Это число)/знаменатель}"
- * Делаем пустую строку
- * Отделительную строку размером с "-${(Это число)/знаменатель}".length
- * 4 шаг. Вычитаем из начального выписанное. Записываем его, + след разряд у делимого
- * если след разряда не хватает, чтобы число делилось на знаменатель, то если есть дальше еще разряды, то мы
- * ставим в рез-те 0, делаем оформление, вычитаем и т.д. снова итерируемся
- * Когда конец? тогда, когда мы не пройдемся до последнего разряда делимого.
- * В случае деления поровну остаток 0, иначе то, что не смогли поделить
-
- */
