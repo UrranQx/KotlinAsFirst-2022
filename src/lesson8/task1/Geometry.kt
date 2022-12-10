@@ -117,7 +117,7 @@ fun diameter(vararg points: Point): Segment {
     if (points.size < 2) throw IllegalArgumentException()
     // перебор n^2
     var mx = -1.0
-    var longestSegment: Segment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
+    var longestSegment = Segment(Point(0.0, 0.0), Point(0.0, 0.0))
     for (i in points.indices) {
         for (j in i + 1 until points.size) {
             val temp = points[i].distance(points[j])
@@ -161,9 +161,12 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Найти точку пересечения с другой линией.
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
-    fun crossPoint(other: Line): Point = TODO()/*Point((other.b - b)/(tan(angle) - tan(other.angle)),
-        tan(angle)*((other.b - b)/(tan(angle) - tan(other.angle))) + b)*/
-
+    fun crossPoint(other: Line): Point {
+        //точка пересечения - это особая точка, где x1 = x2, y1 = y2
+        val x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
+        val y = tan(other.angle) * x + other.b / cos(other.angle)
+        return Point(x, y)
+    }
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
