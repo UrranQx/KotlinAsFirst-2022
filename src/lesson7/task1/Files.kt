@@ -176,9 +176,11 @@ fun sibilants(inputName: String, outputName: String) {
  */
 fun centerFile(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
-        val strings = File(inputName).readLines().map { it.trim() }
-        val maxLength = strings.maxOfOrNull { it.length } ?: 0
-        for (str in strings) {
+        var maxLength = 0
+        File(inputName).forEachLine { maxLength = maxOf(maxLength, it.trim().length) }
+        //val maxLength = strings.maxOfOrNull { it.length } ?: 0
+        File(inputName).forEachLine {
+            val str = it.trim()
             val centeredStr = StringBuilder()
             val k = maxLength - str.length
             val left = k / 2 //хитрая штука с целочисленным делением
@@ -663,7 +665,9 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         writer.write(firstLine)
         writer.newLine()
 
-        writer.write(secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3 + spaceFixer1), res).toString())
+        writer.write(
+            secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3 + spaceFixer1), res).toString()
+        )
         writer.newLine()
         writer.write(makeDivString(caret, dNum(mult)))
         writer.newLine()
