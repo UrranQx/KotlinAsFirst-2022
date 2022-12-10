@@ -594,6 +594,11 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
+fun writeThenNewLine(str: String, writer: BufferedWriter) {
+    writer.write(str)
+    writer.newLine()
+}
+
 fun makeDivString(caret: Int, multLength: Int): String {
     val str = StringBuilder(" ".repeat(caret - multLength - 1))
     return str.append("-".repeat(multLength + 1)).toString()
@@ -607,18 +612,15 @@ fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter) {
     val firstLine = "$lhv | $rhv"
     val res = (lhv / rhv)
     val mult = res.toString().first().digitToInt() * rhv
-    writer.write(firstLine)
-    writer.newLine()
+    writeThenNewLine(firstLine, writer)
     val caret = dNum(lhv) - dNum(mult) + 1
     val secondLine = StringBuilder()
-    writer.write(
-        secondLine.append(
-            makeSpaces(caret - 1, "-$mult"), " ".repeat(caret - dNum(lhv) + 3), res
-        ).toString()
+    writeThenNewLine(
+        secondLine.append(makeSpaces(caret - 1, "-$mult"), " ".repeat(caret - dNum(lhv) + 3), res)
+            .toString(),
+        writer
     )
-    writer.newLine()
-    writer.write(makeDivString(caret, dNum(lhv) - 1))
-    writer.newLine()
+    writeThenNewLine(makeDivString(caret, dNum(lhv) - 1), writer)
     writer.write(lhv.toString())
 
 }
@@ -659,23 +661,20 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         var spaceFixer1 = 0
         val secondLine = StringBuilder()
         var upperdigits = firstLine.substring(1, dNum(mult) + 1).toInt()
-        if (upperdigits < mult) {
+        if (upperdigits < mult) { //обработка сценария 2
             firstLine = "$lhv | $rhv"
-            spaceFixer1 = -1
+            spaceFixer1 = -1// Оно не элегантно, зато работает.
             upperdigits = upperdigits * 10 + firstLine[dNum(mult)].digitToInt()
         }
         var leftOver = upperdigits - mult
 
-        writer.write(firstLine)
-        writer.newLine()
+        writeThenNewLine(firstLine, writer)
 
-        writer.write(
-            secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3 + spaceFixer1), res).toString()
+        writeThenNewLine(
+            secondLine.append("-${mult}", " ".repeat(dNum(lhv) - dNum(mult) + 3 + spaceFixer1), res).toString(),
+            writer
         )
-        writer.newLine()
-        writer.write(makeDivString(caret, dNum(mult)))
-        writer.newLine()
-
+        writeThenNewLine(makeDivString(caret, dNum(mult)), writer)
         writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
         // newRes = leftOver * 10 + firstLine[caret].digitToInt()
         if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
@@ -688,10 +687,8 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
 
             mult = res[i].digitToInt() * rhv
             leftOver = newRes - mult
-            writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
-            writer.newLine()
-            writer.write(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)))
-            writer.newLine()
+            writeThenNewLine(makeSpaces(caret - dNum(mult), "-$mult"),writer)
+            writeThenNewLine(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)),writer)
             //
             writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
             if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
