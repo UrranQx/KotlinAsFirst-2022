@@ -104,6 +104,7 @@ data class Segment(val begin: Point, val end: Point) {
         begin.hashCode() + end.hashCode()
 
     val length: Double = begin.distance(end)
+    //val middlePoint: Point = Point((begin.x + end.x) / 2, (begin.y + end.y) / 2)
 }
 
 /**
@@ -184,20 +185,29 @@ class Line private constructor(val b: Double, val angle: Double) {
  *
  * Построить прямую по отрезку
  */
-fun lineBySegment(s: Segment): Line = Line(s.begin, atan((s.end.y - s.begin.y) / (s.end.x - s.begin.x)))
+fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
 
 /**
  * Средняя (3 балла)
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = Line(a, atan((b.y - a.y) / (b.x - a.x)))
+fun lineByPoints(a: Point, b: Point): Line = Line(a, atan(abs((b.y - a.y) / (b.x - a.x))))
+
 /**
  * Сложная (5 баллов)
  *
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
-fun bisectorByPoints(a: Point, b: Point): Line = TODO()
+fun bisectorByPoints(a: Point, b: Point): Line {
+    //у нас представление такое: точка - ..... | ..... - точка
+    //соответственно, эту линию надо строить посередине координат этих точек
+    //а угол наклона вычисляется из угла наклона прямой по точкам: k - угол наклона представления y = k * x + b
+    //тогда ур-е прямой ей перп-й -> y = (-1 / k) * x + b
+    val equation = lineByPoints(a, b)
+    val middlePoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
+    return Line(middlePoint, (equation.angle + PI / 2) % PI)
+}
 
 /**
  * Средняя (3 балла)
