@@ -229,10 +229,14 @@ fun centerFile(inputName: String, outputName: String) {
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
-        val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
+        //val lines = File(inputName).readLines().map { it.trim().split(Regex("""\s+""")).joinToString(" ") }
         //ресурсоёмкое по памяти убирание сдвоенных, строенных и т.д. пробелов
-        val maxLength = lines.maxOfOrNull { it.length } ?: 0
-        for (line in lines) {
+        var maxLength = 0
+        File(inputName).forEachLine {
+            maxLength = maxOf(maxLength, it.trim().split(Regex("""\s+""")).joinToString(" ").length)
+        }
+        File(inputName).forEachLine { fileLine ->
+            val line = fileLine.trim().split(Regex("""\s+""")).joinToString(" ")
             val words = line.split(Regex("""\s""")).filter { it.isNotEmpty() }
             val wordsCount = words.size // слов n штук, тогда между ними (n - 1) пробелов
             var s = maxLength - words.sumOf { it.length } //всего места под пробелы = sum of gaps
