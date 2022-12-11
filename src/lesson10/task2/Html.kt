@@ -3,6 +3,7 @@ package lesson10.task2
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 
+
 /**
  * Пример: преобразование списка списков в HTML таблицу (решение в лоб)
  */
@@ -85,7 +86,9 @@ fun generateListHtml(list: List<String>): String {
     sb.myHtml {
         myBody {
             myList {
-                TODO()
+                for (item in list) {
+                    myItem { +item }
+                }
             }
         }
     }
@@ -108,18 +111,27 @@ private class HTMLBody(val sb: StringBuilder) {
     }
 
     fun myList(init: HTMLList.() -> Unit): HTMLList {
-        TODO()
+        val ol = HTMLList(sb)
+        sb.append("<ol>")
+        ol.init()
+        sb.append("</ol>")
+        return ol
     }
 }
 
 private class HTMLList(val sb: StringBuilder) {
     fun myItem(init: HTMLItem.() -> Unit): HTMLItem {
-        TODO()
+        val li = HTMLItem(sb)
+        sb.append("<li>")
+        li.init()
+        sb.append("</li>")
+        return li
     }
 }
 
 private class HTMLItem(val sb: StringBuilder) {
     operator fun String.unaryPlus() {
+        sb.append(this)
     }
 }
 
