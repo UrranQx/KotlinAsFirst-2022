@@ -310,8 +310,8 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             centers.add(t)
         }
     }
-//    println(centers)
-//    println()
+    println(centers)
+    println()
     val n = centers.size
     val cMid = Point(centers.map { it.x }.sum() / n, centers.map { it.y }.sum() / n)
     // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
@@ -321,9 +321,10 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     // потом проходимся по листу
     // если встречалось -> бац и в сет +1, нет - записываем в сет
     // на выходе берем ключ сета с максимальным значением
+    val delta = 12 // погрешность в 12 знаков - оверкилл Можно выставить delta = 5 и жить спокойно
     val ans = mutableMapOf<Point, Int>()
     for ((x, y) in centers) {
-        val temp = Point(ceil(x * 10.0.pow(12)), ceil(y * 10.0.pow(12)))
+        val temp = Point(round(x * 10.0.pow(delta)), round(y * 10.0.pow(delta)))
         if (ans[temp] == null) ans[temp] = 1
         else ans[temp] = ans[temp]!! + 1
     }
@@ -332,10 +333,11 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     for ((key, element) in ans) {
         if (mx < element) {
             mx = element
-            popularOpinion = Point(key.x / 10.0.pow(12), key.y / 10.0.pow(12))
+            popularOpinion = Point(key.x / 10.0.pow(delta), key.y / 10.0.pow(delta))
         }
     }
-//    println(popularOpinion)
+    println(ans)
+    println(popularOpinion)
     return Circle(popularOpinion, a.distance(popularOpinion))
 }
 
