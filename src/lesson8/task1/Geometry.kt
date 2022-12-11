@@ -194,7 +194,13 @@ fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line = Line(a, atan(abs((b.y - a.y) / (b.x - a.x))))
+fun lineByPoints(a: Point, b: Point): Line {
+    val tmp = ((b.y - a.y) / (b.x - a.x))
+    val ans: Line = if (tmp == Double.POSITIVE_INFINITY || tmp == Double.NEGATIVE_INFINITY) Line(a, abs(atan(tmp)))
+    else Line(a, (PI+ (atan(tmp))) % PI)
+    //println(ans.angle)
+    return ans
+}
 
 /**
  * Сложная (5 баллов)
