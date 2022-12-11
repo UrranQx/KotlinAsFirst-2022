@@ -169,7 +169,7 @@ class Line private constructor(val b: Double, val angle: Double) {
         return Point(x, y)
     }
 
-    fun perpendicularLineByPoint(point: Point): Line = Line(point, (this.angle + PI / 2) % PI)
+    //fun perpendicularLineByPoint(point: Point): Line = Line(point, (this.angle + PI / 2) % PI)
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -196,10 +196,10 @@ fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
  */
 fun lineByPoints(a: Point, b: Point): Line {
     val tmp = ((b.y - a.y) / (b.x - a.x))
-    val ans: Line = if (tmp == Double.POSITIVE_INFINITY || tmp == Double.NEGATIVE_INFINITY) Line(a, abs(atan(tmp)))
-    else Line(a, (PI+ (atan(tmp))) % PI)
+    //println("tmp = $tmp; Points = $a ; $b")
     //println(ans.angle)
-    return ans
+    return if (tmp == Double.POSITIVE_INFINITY || tmp == Double.NEGATIVE_INFINITY) Line(a, abs(atan(tmp)))
+    else Line(a, (PI + (atan(tmp))) % PI)
 }
 
 /**
@@ -208,18 +208,34 @@ fun lineByPoints(a: Point, b: Point): Line {
  * Построить серединный перпендикуляр по отрезку или по двум точкам
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
+    val equation = lineByPoints(a, b)
+    val middlePoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
+
+    /**return equation.perpendicularLineByPoint(middlePoint)*/
     //у нас представление такое: точка - ..... | ..... - точка
     //соответственно, эту линию надо строить посередине координат этих точек
     //а угол наклона вычисляется из угла наклона прямой по точкам: k - угол наклона представления y = k * x + b
     //тогда ур-е прямой ей перп-й -> y = (-1 / k) * x + b
-    val equation = lineByPoints(a, b)
-    val middlePoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    return equation.perpendicularLineByPoint(middlePoint)
+
+
     // другой алгос - построить две окружности из этих точек, соединить точки пересечения в линию
     // но что есть circle.intersections ?
     // это должно быть выводиться из уравнения окружности для каждой из точек, а затем
     // приравнивания каждого. Квадратное уравнение с двумя решениями** из которых мы найдем коорды для прямой
     // ** - начальные точки не совпадают
+    //
+    // Другой алгос
+    // Находим delta X и delta Y
+    // из любой точки строим вправо dy
+    // потом в зависимости от угла ( <= PI / 2 ) -> вверх (коэфф - полож) ( > PI / 2) -> вниз (коэфф - отриц)
+    // нашли эти две точки, строим по ним линию, берем от нее угол наклона
+    val dx = abs(a.x - b.x)
+    val dy = abs(a.y - b.y)
+    // let's take a point "a"
+    val xPoint = Point(a.x + dy, a.y)
+    val yPoint = Point(a.x, a.y + sign(PI / 2 - equation.angle) * dx)
+    val perpendicularLine = lineByPoints(xPoint, yPoint)
+    return Line(middlePoint, perpendicularLine.angle)
 }
 
 /**
@@ -262,17 +278,46 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(c, b))
+    val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
+    return Circle(center, a.distance(center))
+    // Порядок точек, почему то влияет на значение center
+    /*val points = listOf(a, b, c)
+    for (i in 0 until points.size) {
+        for (j in 0 until points.size) {
+            if (j == i) continue
+            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
+            println(
+                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
+                    bisectorByPoints(
+                        points[i],
+                        points[j]
+                    ).angle
+                } "
+            )
+            println()
+        }
+        print("=".repeat(70))
+        println()
+    }
+    println("#".repeat(70))
+    println()
+    val centers = mutableListOf<Point>()
+    for (i in points.indices) {
+        for (j in points.indices) {
+            if (i == j) continue
+            val k = 3 - (i + j)
+            centers.add(bisectorByPoints(points[i], points[j]).crossPoint(bisectorByPoints(points[k], points[i])))
+        }
+    }
+    println(centers)
+    println()*/
     // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
     // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя пары пр-р к AB и
-    return Circle(center, a.distance(center))
-
 }
-// тут все просто, как учили в школе
-// центр описанной окружности лежит там же, где и ортоцентр
-// ортоцентр -> на пересечении пер-в
-// радиус же окружности можно найти по теореме синусов
-// a / sinA = b / sinB = c / sinC = 2R
+
+/**
+ *
+ */
 
 /**
  * Очень сложная (10 баллов)
