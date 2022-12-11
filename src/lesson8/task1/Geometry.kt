@@ -169,6 +169,8 @@ class Line private constructor(val b: Double, val angle: Double) {
         return Point(x, y)
     }
 
+    fun perpendicularLineByPoint(point: Point): Line = Line(point, (this.angle + PI / 2) % PI)
+
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
     override fun hashCode(): Int {
@@ -206,7 +208,12 @@ fun bisectorByPoints(a: Point, b: Point): Line {
     //тогда ур-е прямой ей перп-й -> y = (-1 / k) * x + b
     val equation = lineByPoints(a, b)
     val middlePoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    return Line(middlePoint, (equation.angle + PI / 2) % PI)
+    return equation.perpendicularLineByPoint(middlePoint)
+    // другой алгос - построить две окружности из этих точек, соединить точки пересечения в линию
+    // но что есть circle.intersections ?
+    // это должно быть выводиться из уравнения окружности для каждой из точек, а затем
+    // приравнивания каждого. Квадратное уравнение с двумя решениями** из которых мы найдем коорды для прямой
+    // ** - начальные точки не совпадают
 }
 
 /**
@@ -221,8 +228,24 @@ fun bisectorByPoints(a: Point, b: Point): Line {
  *
  * Если в списке менее двух окружностей, бросить IllegalArgumentException
  */
-fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
-
+fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
+    if (circles.size < 2) throw IllegalArgumentException()
+    var mn = Double.POSITIVE_INFINITY
+    var ans = Pair(circles[0], circles[1])
+    for (i in 0 until circles.size - 1) {
+        for (j in i + 1 until circles.size) {
+            val len = circles[i].distance(circles[j])
+            if (mn > len) {
+                mn = len
+                ans = Pair(circles[i], circles[j])
+            }
+        }
+    }
+    return ans
+}
+// по сути это граф, в котором ребра заданны расстоянием между кругами и надо найти наименьшее ребро и его основания
+// алгоритм Дейкстры тут был бы оверкиллом
+// Недолго думая, после этих слов в голове остался только лишь перебор
 /**
  * Сложная (5 баллов)
  *
@@ -232,7 +255,18 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val center = bisectorByPoints(c, b).crossPoint(bisectorByPoints(a, c))
+    // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
+    // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя пары пр-р к AB и
+    return Circle(center, a.distance(center))
+
+}
+// тут все просто, как учили в школе
+// центр описанной окружности лежит там же, где и ортоцентр
+// ортоцентр -> на пересечении пер-в
+// радиус же окружности можно найти по теореме синусов
+// a / sinA = b / sinB = c / sinC = 2R
 
 /**
  * Очень сложная (10 баллов)
