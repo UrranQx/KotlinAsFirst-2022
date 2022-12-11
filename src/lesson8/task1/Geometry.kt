@@ -278,41 +278,64 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
-    return Circle(center, a.distance(center))
+    //val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
+
     // Порядок точек, почему то влияет на значение center
-    /*val points = listOf(a, b, c)
-    for (i in 0 until points.size) {
-        for (j in 0 until points.size) {
-            if (j == i) continue
-            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
-            println(
-                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
-                    bisectorByPoints(
-                        points[i],
-                        points[j]
-                    ).angle
-                } "
-            )
-            println()
-        }
-        print("=".repeat(70))
-        println()
-    }
-    println("#".repeat(70))
-    println()
+    val points = listOf(a, b, c)
+//    for (i in 0 until points.size) {
+//        for (j in 0 until points.size) {
+//            if (j == i) continue
+//            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
+//            println(
+//                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
+//                    bisectorByPoints(
+//                        points[i],
+//                        points[j]
+//                    ).angle
+//                } "
+//            )
+//            println()
+//        }
+//        print("=".repeat(70))
+//        println()
+//    }
+//    println("#".repeat(70))
+//    println()
     val centers = mutableListOf<Point>()
     for (i in points.indices) {
         for (j in points.indices) {
             if (i == j) continue
             val k = 3 - (i + j)
-            centers.add(bisectorByPoints(points[i], points[j]).crossPoint(bisectorByPoints(points[k], points[i])))
+            val t = bisectorByPoints(points[i], points[j]).crossPoint(bisectorByPoints(points[k], points[i]))
+            centers.add(t)
         }
     }
     println(centers)
-    println()*/
+    println()
+    val n = centers.size
+    val cMid = Point(centers.map { it.x }.sum() / n, centers.map { it.y }.sum() / n)
     // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
     // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя пары пр-р к AB и
+    // полученные точки надо как-то фильтровать. Надо разделить их на "команды"
+    // делим каждую коорду на 10, чтобы потом нормально округлить
+    // потом проходимся по листу
+    // если встречалось -> бац и в сет +1, нет - записываем в сет
+    // на выходе берем ключ сета с максимальным значением
+    val ans = mutableMapOf<Point, Int>()
+    for ((x, y) in centers) {
+        val temp = Point(ceil(x * 10.0.pow(12)), ceil(y * 10.0.pow(12)))
+        if (ans[temp] == null) ans[temp] = 1
+        else ans[temp] = ans[temp]!! + 1
+    }
+    var popularOpinion: Point = cMid
+    var mx = 0
+    for ((key, element) in ans) {
+        if (mx <= element) {
+            mx = element
+            popularOpinion = Point(key.x / 10.0.pow(12), key.y / 10.0.pow(12))
+        }
+    }
+    return Circle(popularOpinion, a.distance(popularOpinion))
 }
 
 /**
