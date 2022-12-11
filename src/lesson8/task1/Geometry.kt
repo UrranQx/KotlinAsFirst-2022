@@ -279,8 +279,28 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     //val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
+
     // Порядок точек, почему то влияет на значение center
     val points = listOf(a, b, c)
+//    for (i in 0 until points.size) {
+//        for (j in 0 until points.size) {
+//            if (j == i) continue
+//            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
+//            println(
+//                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
+//                    bisectorByPoints(
+//                        points[i],
+//                        points[j]
+//                    ).angle
+//                } "
+//            )
+//            println()
+//        }
+//        print("=".repeat(70))
+//        println()
+//    }
+//    println("#".repeat(70))
+//    println()
     val centers = mutableListOf<Point>()
     for (i in points.indices) {
         for (j in points.indices) {
@@ -310,11 +330,12 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     var popularOpinion: Point = cMid
     var mx = 0
     for ((key, element) in ans) {
-        if (mx <= element) {
+        if (mx < element) {
             mx = element
             popularOpinion = Point(key.x / 10.0.pow(12), key.y / 10.0.pow(12))
         }
     }
+//    println(popularOpinion)
     return Circle(popularOpinion, a.distance(popularOpinion))
 }
 
