@@ -279,28 +279,8 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     //val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
-
     // Порядок точек, почему то влияет на значение center
     val points = listOf(a, b, c)
-//    for (i in 0 until points.size) {
-//        for (j in 0 until points.size) {
-//            if (j == i) continue
-//            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
-//            println(
-//                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
-//                    bisectorByPoints(
-//                        points[i],
-//                        points[j]
-//                    ).angle
-//                } "
-//            )
-//            println()
-//        }
-//        print("=".repeat(70))
-//        println()
-//    }
-//    println("#".repeat(70))
-//    println()
     val centers = mutableListOf<Point>()
     for (i in points.indices) {
         for (j in points.indices) {
@@ -310,12 +290,12 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             centers.add(t)
         }
     }
-    println(centers)
-    println()
+//    println(centers)
+//    println()
     val n = centers.size
     val cMid = Point(centers.map { it.x }.sum() / n, centers.map { it.y }.sum() / n)
     // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
-    // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя пары пр-р к AB и
+    // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя есть пары, которые дают другой рез-т)
     // полученные точки надо как-то фильтровать. Надо разделить их на "команды"
     // делим каждую коорду на 10, чтобы потом нормально округлить
     // потом проходимся по листу
