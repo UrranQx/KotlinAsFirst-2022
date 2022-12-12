@@ -321,7 +321,8 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     // потом проходимся по листу
     // если встречалось -> бац и в сет +1, нет - записываем в сет
     // на выходе берем ключ сета с максимальным значением
-    val delta = 12 // погрешность в 12 знаков - оверкилл Можно выставить delta = 5 и жить спокойно
+    val delta = 8 // погрешность в 12 знаков - оверкилл и не всегда работает, Можно выставить delta = 6
+    // и жить спокойно
     val ans = mutableMapOf<Point, Int>()
     for ((x, y) in centers) {
         val temp = Point(round(x * 10.0.pow(delta)), round(y * 10.0.pow(delta)))
@@ -336,8 +337,8 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             popularOpinion = Point(key.x / 10.0.pow(delta), key.y / 10.0.pow(delta))
         }
     }
-//    println(ans)
-//    println(popularOpinion)
+    //println(ans)
+    //println(popularOpinion)
     return Circle(popularOpinion, a.distance(popularOpinion))
 }
 

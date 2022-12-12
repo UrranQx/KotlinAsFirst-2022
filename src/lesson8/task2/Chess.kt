@@ -4,6 +4,7 @@ package lesson8.task2
 
 import java.lang.IllegalArgumentException
 import kotlin.math.*
+import lesson8.task1.*
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -152,7 +153,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
-    val delta = (start.column + start.row - end.column - end.row) / 2
+    //val delta = (start.column + start.row - end.column - end.row) / 2
     return when (bishopMoveNumber(start, end)) {
         -1 -> listOf()
         0 -> listOf(start)
@@ -160,10 +161,19 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         // если два хода, то надо переместиться на линию, откуда по диагонали останется один ход
         //
         else -> {
-            val cl = if (start.column - delta in 1..8) start.column - delta else start.column + delta
-            val rw = if (start.row - delta in 1..8) start.row - delta else start.row + delta
-            listOf(start, Square(cl, rw), end)
+            val st = Point(start.row.toDouble(), start.column.toDouble())
+            val fn = Point(end.row.toDouble(), end.column.toDouble())
+            val p1 = Line(st, PI / 4).crossPoint(Line(fn, 3 * PI / 4))
+            val p2 = Line(st, 3 * PI / 4).crossPoint(Line(fn, PI / 4))
+            val sq1 = Square(round(p1.y).toInt(), round(p1.x).toInt())
+            val sq2 = Square(round(p2.y).toInt(), round(p2.x).toInt())
+            listOf(
+                start,
+                if (sq1.inside()) sq1 else sq2, end
+            )
         }
+        // Зато геметрический вариант хорошо масштабируется для огромных полей, однако при n = 8 простой перебор выгодней
+        // альтернатива -> перебор 1 - ходов на данной диагонали 2 - точек пересечения линий
     }
 }
 
