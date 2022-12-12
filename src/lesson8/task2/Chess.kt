@@ -3,6 +3,7 @@
 package lesson8.task2
 
 import java.lang.IllegalArgumentException
+import kotlin.math.*
 
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
@@ -116,7 +117,21 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    // введем понятие четности клетки
+    // клетка четна, если сумма ее координат % 2 = 0 иначе -> нечетна.
+    // несложно заметить, что это в нужной степени характерезует шахматное поле
+    // И так, если слон на белых клетках, то он никогда не попадет на черную (следует из правил)
+    // И наоборот
+    return when {
+        (!start.inside() || !end.inside()) -> throw IllegalArgumentException()
+        start == end -> 0
+        (start.column + start.row + end.column + end.row) % 2 != 0 -> -1 // четн + четн = четн, нечетн + нечетн = четн
+        abs(start.column - end.column) == abs(start.row - end.row) -> 1
+        else -> 2
+
+    }
+}
 
 /**
  * Сложная (5 баллов)
@@ -136,7 +151,21 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    val delta = (start.column + start.row - end.column - end.row) / 2
+    return when (bishopMoveNumber(start, end)) {
+        -1 -> listOf()
+        0 -> listOf(start)
+        1 -> listOf(start, end)
+        // если два хода, то надо переместиться на линию, откуда по диагонали останется один ход
+        //
+        else -> {
+            val cl = if (start.column - delta in 1..8) start.column - delta else start.column + delta
+            val rw = if (start.row - delta in 1..8) start.row - delta else start.row + delta
+            listOf(start, Square(cl, rw), end)
+        }
+    }
+}
 
 /**
  * Средняя (3 балла)

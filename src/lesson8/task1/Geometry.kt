@@ -336,8 +336,8 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             popularOpinion = Point(key.x / 10.0.pow(delta), key.y / 10.0.pow(delta))
         }
     }
-    println(ans)
-    println(popularOpinion)
+//    println(ans)
+//    println(popularOpinion)
     return Circle(popularOpinion, a.distance(popularOpinion))
 }
 
