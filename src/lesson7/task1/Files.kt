@@ -625,29 +625,6 @@ fun zeroCaseScenario(lhv: Int, rhv: Int, writer: BufferedWriter) {
 
 }
 
-//fun divideInLoop(
-//    lhv: Int, rhv: Int, writer: BufferedWriter,
-//    caret: Int, leftOver: Int, mult: Int, firstLine: String, res: String
-//) {
-//    for (i in 1 until res.length) {
-//        val newRes = leftOver * 10 + firstLine[caret - 1].digitToInt()
-//        //println(res[i])
-//        //println(firstLine[caret])
-//
-//        mult = res[i].digitToInt() * rhv
-//        leftOver = newRes - mult
-//        writer.write(makeSpaces(caret - dNum(mult), "-$mult"))
-//        writer.newLine()
-//        writer.write(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)))
-//        writer.newLine()
-//        //
-//        writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
-//        if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())
-//        caret += 1
-//        writer.newLine()
-//    }
-//}
-
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         val res = (lhv / rhv).toString()

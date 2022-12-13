@@ -163,18 +163,18 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         else -> {
             val st = Point(start.row.toDouble(), start.column.toDouble())
             val fn = Point(end.row.toDouble(), end.column.toDouble())
-            val p1 = Line(st, PI / 4).crossPoint(Line(fn, 3 * PI / 4))
-            val p2 = Line(st, 3 * PI / 4).crossPoint(Line(fn, PI / 4))
-            val sq1 = Square(round(p1.y).toInt(), round(p1.x).toInt())
-            val sq2 = Square(round(p2.y).toInt(), round(p2.x).toInt())
+            val p1 = Line(st, PI / 4).crossPoint(Line(fn, 3 * PI / 4))// Точка пересечения 1
+            val p2 = Line(st, 3 * PI / 4).crossPoint(Line(fn, PI / 4))// Точка перечечения 2
+            val sq1 = Square(round(p1.y).toInt(), round(p1.x).toInt()) // трансформация точки в клетку
+            val sq2 = Square(round(p2.y).toInt(), round(p2.x).toInt()) // трансформация точки в клетку
             listOf(
                 start,
-                if (sq1.inside()) sq1 else sq2,
+                if (sq1.inside()) sq1 else sq2, // Если ходов 2, и какая-то одна из точек не на доске-> другая 100 будет
                 end
             )
         }
         // Геметрический вариант хорошо масштабируется для огромных полей, однако при n = 8 выгодней альтернатива
-        // альтернатива -> перебор  ходов на диагоналях
+        // альтернатива -> перебор ходов на диагоналях
     }
 }
 
@@ -199,7 +199,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
 fun kingMoveNumber(start: Square, end: Square): Int =
-    max(abs(start.column - end.column), abs(start.row - end.row))
+    if (!(start.inside() && end.inside())) throw IllegalArgumentException()
+    else max(abs(start.column - end.column), abs(start.row - end.row))
 // если просто доступен путь по диагонали или по прямой, то такой вывод очевиден
 // если же траектория - ломаная -> то мы идем вначале по диагонали, пока не достигнем равенства с одной из координат
 // потом надо дойти по прямой. Отсюда первый шаг занимает min(a,b) второй, max(a,b) - min(a,b) -> весь путь max(a,b) + 0
@@ -256,7 +257,80 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
+// чтобы определить, сколько ходов надо коню-> можно было бы создать граф, где каждое ребро соединяет возможных ход коня
+// из данной позиции. Запускаем Дейкстру, находим ответ
+
+// Другой вариант, попроще, но по концепции чем-то напоминает проход по графам, но больше 18 задачу из КЕГЭ
+// там для поиска минимального маршрута, мы заполнили бы все клетки, кроме стартовой максимальным числом (миллиордами),
+// а клетка start - 0
+//
+// Мы начнем с того, что мы смотрим на конец. Если там стоит 0 - мы прибили, иначе ->
+// Как мы могли попасть в эту клетку?(минимальным ходом) - смотрим возможные ходы от данной клетки,
+// берем то, что наименьшее и т.к. оттуда надо сделать ход в endPoint, то надо прибавить 1
+// Однако, откуда мы знаем а) Наименьшее значение из этих клеток? б) Значения в этих клетках?
+// a) - minBy{} или что-то такое на поиск минимума
+// б) - Ситуация напоминает начальную, так что тут весьма очевидно образуется рекурсия. База уже есть
+// Можно ли перевернуть в рекурсию в динамику?
+// Подумаем... Мы тогда начинаем из startPoint, и двигаемся по листу возможных ходов из него...
+/*
+fun knightMoves(start: Square): List<Square> {
+    val moves = mutableListOf<Square>()
+    val col = start.column
+    val row = start.row
+    moves.add(Square(col - 2, row - 1))
+    moves.add(Square(col - 1, row - 2))
+    moves.add(Square(col + 1, row - 2))
+    moves.add(Square(col + 2, row - 1))
+    moves.add(Square(col + 2, row + 1))
+    moves.add(Square(col + 1, row + 2))
+    moves.add(Square(col - 1, row + 2))
+    moves.add(Square(col - 2, row + 1))
+    // Вообще всего 8 возможных перестановок, можно было и циклом создать
+    // Типо set(-2, -1, 1, 2) со всеми возможными перестановками, за вычетом (2, -2) (1, -1) и обратные пары
+    return moves.filter { it.inside() }
+}
+*/
+
+/*
+fun calculateMvNumb(start: Square, field: MutableList<MutableList<Int>>, hop: Int) {
+    // функция (subprogramm) рекурсивного заполнения таблицы. Как эксель практически
+    // значение в клетке - кол-во прыжков до нее от самого начала
+    //if (field[start.column - 1][start.row - 1] == 0) return - не то
+    if (hop + 1 > field[start.column - 1][start.row - 1]) return
+    // если у нас значение в клетке меньше, чем количество прыжков до нее + 1,
+    // то значит к ней где-то есть путь получше, игнорим/выпригиваем из этого мува
+    // иначе этот путь потенциально хорош, значит значение этой клетки надо исправить
+    field[start.column - 1][start.row - 1] = hop + 1
+    // тогда придется перезаполнить таблицу, сначала заменив значения доступные из этой клетки, если
+    for (mv in knightMoves(start)) {
+        calculateMvNumb(mv, field, field[start.column - 1][start.row - 1])
+    }
+
+
+    // if any{mv} вернет
+}
+*/
+
 fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+    /*
+        if (!(start.inside() && end.inside())) throw IllegalArgumentException()
+        if (start == end) return 0
+        val field = MutableList(8) { MutableList(8) { Int.MAX_VALUE } }
+        //var ans = 0
+        */
+    /* for (i in 1..8) {
+             for (j in 1..8) {
+                 field[i][j] = Int.MAX_VALUE
+             }
+         }*//*
+
+    //field[start.column - 1][start.row - 1] = 0
+
+    calculateMvNumb(end, field, 0)
+    return field[end.column - 1][end.row - 1]
+
+*/
+
 
 /**
  * Очень сложная (10 баллов)
