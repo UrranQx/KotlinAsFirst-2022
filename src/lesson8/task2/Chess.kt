@@ -169,11 +169,12 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             val sq2 = Square(round(p2.y).toInt(), round(p2.x).toInt())
             listOf(
                 start,
-                if (sq1.inside()) sq1 else sq2, end
+                if (sq1.inside()) sq1 else sq2,
+                end
             )
         }
-        // Зато геметрический вариант хорошо масштабируется для огромных полей, однако при n = 8 простой перебор выгодней
-        // альтернатива -> перебор 1 - ходов на данной диагонали 2 - точек пересечения линий
+        // Геметрический вариант хорошо масштабируется для огромных полей, однако при n = 8 выгодней альтернатива
+        // альтернатива -> перебор  ходов на диагоналях
     }
 }
 
@@ -197,7 +198,11 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int =
+    max(abs(start.column - end.column), abs(start.row - end.row))
+// если просто доступен путь по диагонали или по прямой, то такой вывод очевиден
+// если же траектория - ломаная -> то мы идем вначале по диагонали, пока не достигнем равенства с одной из координат
+// потом надо дойти по прямой. Отсюда первый шаг занимает min(a,b) второй, max(a,b) - min(a,b) -> весь путь max(a,b) + 0
 
 /**
  * Сложная (5 баллов)
@@ -213,7 +218,20 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    val ans = mutableListOf(start)
+    var y = start.column
+    var x = start.row
+    for (iter in 0 until kingMoveNumber(start, end)) {
+        val deltaY = (y - end.column).sign
+        val deltaX = (x - end.row).sign
+        ans.add(Square(y - deltaY, x - deltaX))
+        y -= deltaY
+        x -= deltaX
+
+    }
+    return ans
+}
 
 /**
  * Сложная (6 баллов)
