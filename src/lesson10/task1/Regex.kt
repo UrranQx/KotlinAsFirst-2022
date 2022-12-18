@@ -179,3 +179,64 @@ class Parser(private val groups: List<String>) {
 
     private val operationMap = mapOf("+" to PLUS, "-" to MINUS, "*" to TIMES, "/" to DIV, "^" to POW)
 }
+/*
+
+    private fun parseItem(): Expression {
+        var left = parseFactor()
+        while (pos < groups.size) {
+            when (val op = operationMap[groups[pos]]) {
+                TIMES, DIV -> {
+                    pos++
+                    val right = parseFactor()
+                    left = Expression.Binary(left, op, right)
+                }
+
+                else -> return left
+            }
+        }
+        return left
+    }
+
+    private fun parseFactor(): Expression {
+        var left = parsePow()
+        while (pos < groups.size) {
+            when (val op = operationMap[groups[pos]]) {
+                POW -> {
+                    pos++
+                    val right = parsePow()
+                    left = Expression.Binary(left, op, right)
+                }
+
+                else -> return left
+            }
+        }
+        return left
+    }
+
+    /**
+     * Сложная (15 баллов)
+     *
+     * Поддержать операцию возведения в степень на базе того же парсера.
+     * Операция обозначается символом ^, выполняется раньше, чем умножение и деление.
+     * Кроме написания этой функции, вам придётся вызвать её в одной или двух
+     * предыдущих функциях парсера, и поддержать операцию POW внутри функции calculate.
+     */
+    private fun parsePow(): Expression {
+        check(pos < groups.size) { "Unexpected expression end" }
+        return when (val group = groups[pos++]) {
+            "x" -> Expression.Variable
+            "-" -> Expression.Negate(parseExpression())
+            "(" -> {
+                val arg = parseExpression()
+                val next = groups[pos++]
+                if (next == ")") arg
+                else throw IllegalStateException(") expected instead of $next")
+            }
+
+            else -> Expression.Constant(group.toInt())
+        }
+    }
+
+    private val operationMap = mapOf("+" to PLUS, "-" to MINUS, "*" to TIMES, "/" to DIV, "^" to POW)
+}
+ */
