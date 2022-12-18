@@ -303,6 +303,24 @@ fun alignFileByWidth(inputName: String, outputName: String) {
 // Если 20 + i имеет такое же число, как и 20, то добавляем его.
 // Вывод
 fun top20Words(inputName: String): Map<String, Int> = TODO()
+/*   val pack = mutableMapOf<String, Int>()
+   File(inputName).forEachLine {
+       val line = it.lowercase()
+       for (word in line.split(Regex("""[^А-яA-zёЁ]+""")).filter { it != "" }) {
+           if (pack[word] == null) pack[word] = 1
+           else pack[word] = pack[word]!! + 1
+       }
+   }
+
+   val ans = pack.toList()
+       .sortedByDescending { (key, value) -> value }
+       .toMap()
+   //val ans = mutableMapOf<String, Int>()
+   val i = ans.toList()[19]
+   val temp = mutableListOf<String>()
+   for (i in 0 until 20)
+       temp.add(ans[i])
+   return ans*/
 // Самое сложное - достать слова из текста, дальше уже, как мы организуем мапу\массив для них -
 // дело структурирования данных(где-то давно решенная задача)
 /**
@@ -664,8 +682,8 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
 
             mult = res[i].digitToInt() * rhv
             leftOver = newRes - mult
-            writeThenNewLine(makeSpaces(caret - dNum(mult), "-$mult"),writer)
-            writeThenNewLine(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)),writer)
+            writeThenNewLine(makeSpaces(caret - dNum(mult), "-$mult"), writer)
+            writeThenNewLine(makeDivString(caret, maxOf(dNum(mult), dNum(newRes) - 1)), writer)
             //
             writer.write(makeSpaces(caret + 1 - dNum(leftOver), leftOver.toString()))
             if (firstLine[caret].isDigit()) writer.write(firstLine[caret].toString())

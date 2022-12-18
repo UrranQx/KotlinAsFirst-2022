@@ -165,6 +165,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
             val fn = Point(end.row.toDouble(), end.column.toDouble())
             val p1 = Line(st, PI / 4).crossPoint(Line(fn, 3 * PI / 4))// Точка пересечения 1
             val p2 = Line(st, 3 * PI / 4).crossPoint(Line(fn, PI / 4))// Точка перечечения 2
+            //println("p1 = $p1; p2 = $p2")
             val sq1 = Square(round(p1.y).toInt(), round(p1.x).toInt()) // трансформация точки в клетку
             val sq2 = Square(round(p2.y).toInt(), round(p2.x).toInt()) // трансформация точки в клетку
             listOf(

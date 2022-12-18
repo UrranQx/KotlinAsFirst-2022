@@ -164,12 +164,21 @@ class Line private constructor(val b: Double, val angle: Double) {
      */
     fun crossPoint(other: Line): Point {
         //точка пересечения - это особая точка, где x1 = x2, y1 = y2
-        val x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
-        val y = tan(other.angle) * x + other.b / cos(other.angle)
+        val x: Double
+        val y: Double
+        if (other.angle != PI / 2) {
+            x = (other.b / cos(other.angle) - b / cos(angle)) / (tan(angle) - tan(other.angle))
+            y = tan(other.angle) * x + other.b / cos(other.angle)
+        } else {
+            x = (this.b / cos(this.angle) - other.b / cos(other.angle)) / (tan(other.angle) - tan(this.angle))
+            y = tan(this.angle) * x + this.b / cos(this.angle)
+            // глупость, но это работает и теперь circleByThreePoints делается в 2 строки
+        }
         return Point(x, y)
     }
 
-    //fun perpendicularLineByPoint(point: Point): Line = Line(point, (this.angle + PI / 2) % PI)
+
+    fun perpendicularLineByPoint(point: Point): Line = Line(point, (this.angle + PI / 2) % PI)
 
     override fun equals(other: Any?) = other is Line && angle == other.angle && b == other.b
 
@@ -194,13 +203,11 @@ fun lineBySegment(s: Segment): Line = lineByPoints(s.begin, s.end)
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line {
-    val tmp = ((b.y - a.y) / (b.x - a.x))
-    //println("tmp = $tmp; Points = $a ; $b")
-    //println(ans.angle)
-    return if (tmp == Double.POSITIVE_INFINITY || tmp == Double.NEGATIVE_INFINITY) Line(a, abs(atan(tmp)))
-    else Line(a, (PI + (atan(tmp))) % PI)
-}
+fun lineByPoints(a: Point, b: Point): Line = Line(a, (PI + (atan2((b.y - a.y), (b.x - a.x)))) % PI)
+//println("tmp = $tmp; Points = $a ; $b")
+//println(ans.angle)
+/*return if (tmp == Double.POSITIVE_INFINITY || tmp == Double.NEGATIVE_INFINITY) Line(a, abs(atan(tmp)))
+else Line(a, (PI + (atan(tmp))) % PI)*/
 
 /**
  * Сложная (5 баллов)
@@ -211,8 +218,8 @@ fun bisectorByPoints(a: Point, b: Point): Line {
     val equation = lineByPoints(a, b)
     val middlePoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
 
-    /**return equation.perpendicularLineByPoint(middlePoint)*/
-    //у нас представление такое: точка - ..... | ..... - точка
+    return equation.perpendicularLineByPoint(middlePoint)
+    /*//у нас представление такое: точка - ..... | ..... - точка
     //соответственно, эту линию надо строить посередине координат этих точек
     //а угол наклона вычисляется из угла наклона прямой по точкам: k - угол наклона представления y = k * x + b
     //тогда ур-е прямой ей перп-й -> y = (-1 / k) * x + b
@@ -235,7 +242,7 @@ fun bisectorByPoints(a: Point, b: Point): Line {
     val xPoint = Point(a.x + dy, a.y)
     val yPoint = Point(a.x, a.y + sign(PI / 2 - equation.angle) * dx)
     val perpendicularLine = lineByPoints(xPoint, yPoint)
-    return Line(middlePoint, perpendicularLine.angle)
+    return Line(middlePoint, perpendicularLine.angle)*/
 }
 
 /**
@@ -278,68 +285,68 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    //val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
-
-    // Порядок точек, почему то влияет на значение center
-    val points = listOf(a, b, c)
-//    for (i in 0 until points.size) {
-//        for (j in 0 until points.size) {
-//            if (j == i) continue
-//            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
-//            println(
-//                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
-//                    bisectorByPoints(
-//                        points[i],
-//                        points[j]
-//                    ).angle
-//                } "
-//            )
-//            println()
-//        }
-//        print("=".repeat(70))
-//        println()
-//    }
-//    println("#".repeat(70))
-//    println()
-    val centers = mutableListOf<Point>()
-    for (i in points.indices) {
-        for (j in points.indices) {
-            if (i == j) continue
-            val k = 3 - (i + j)
-            val t = bisectorByPoints(points[i], points[j]).crossPoint(bisectorByPoints(points[k], points[i]))
-            centers.add(t)
+    val center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(a, b))
+    return Circle(center, a.distance(center))
+    /*    // Порядок точек, почему то влияет на значение center -> причиной тому был .crossPoint
+        val points = listOf(a, b, c)
+    //    for (i in 0 until points.size) {
+    //        for (j in 0 until points.size) {
+    //            if (j == i) continue
+    //            println("${points[i]}\t ${points[j]}\t \n ${bisectorByPoints(points[i], points[j])}")
+    //            println(
+    //                "b = ${bisectorByPoints(points[i], points[j]).b}\t angle = ${
+    //                    bisectorByPoints(
+    //                        points[i],
+    //                        points[j]
+    //                    ).angle
+    //                } "
+    //            )
+    //            println()
+    //        }
+    //        print("=".repeat(70))
+    //        println()
+    //    }
+    //    println("#".repeat(70))
+    //    println()
+        val centers = mutableListOf<Point>()
+        for (i in points.indices) {
+            for (j in points.indices) {
+                if (i == j) continue
+                val k = 3 - (i + j)
+                val t = bisectorByPoints(points[i], points[j]).crossPoint(bisectorByPoints(points[k], points[i]))
+                centers.add(t)
+            }
         }
-    }
-    println(centers)
-    println()
-    val n = centers.size
-    val cMid = Point(centers.map { it.x }.sum() / n, centers.map { it.y }.sum() / n)
-    // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
-    // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя есть пары, которые дают другой рез-т)
-    // полученные точки надо как-то фильтровать. Надо разделить их на "команды"
-    // делим каждую коорду на 10, чтобы потом нормально округлить
-    // потом проходимся по листу
-    // если встречалось -> бац и в сет +1, нет - записываем в сет
-    // на выходе берем ключ сета с максимальным значением
-    val delta = 8 // погрешность в 12 знаков - оверкилл и не всегда работает, Можно выставить delta = 6
-    // и жить спокойно
-    val ans = mutableMapOf<Point, Int>()
-    for ((x, y) in centers) {
-        val temp = Point(round(x * 10.0.pow(delta)), round(y * 10.0.pow(delta)))
-        if (ans[temp] == null) ans[temp] = 1
-        else ans[temp] = ans[temp]!! + 1
-    }
-    var popularOpinion: Point = cMid
-    var mx = 0
-    for ((key, element) in ans) {
-        if (mx < element) {
-            mx = element
-            popularOpinion = Point(key.x / 10.0.pow(delta), key.y / 10.0.pow(delta))
+        println(centers)
+        println()
+        val n = centers.size
+        val cMid = Point(centers.map { it.x }.sum() / n, centers.map { it.y }.sum() / n)
+        // Методом научного ТЫКА было исследованно, что почему то только точка пересечения таких перпендикуляров, как
+        // пр-р к CB и пр-р к AC - дают нужный рез-т. (хотя есть пары, которые дают другой рез-т)
+        // полученные точки надо как-то фильтровать. Надо разделить их на "команды"
+        // делим каждую коорду на 10, чтобы потом нормально округлить
+        // потом проходимся по листу
+        // если встречалось -> бац и в сет +1, нет - записываем в сет
+        // на выходе берем ключ сета с максимальным значением
+        val delta = 8 // погрешность в 12 знаков - оверкилл и не всегда работает, Можно выставить delta = 6
+        // и жить спокойно
+        val ans = mutableMapOf<Point, Int>()
+        for ((x, y) in centers) {
+            val temp = Point(round(x * 10.0.pow(delta)), round(y * 10.0.pow(delta)))
+            if (ans[temp] == null) ans[temp] = 1
+            else ans[temp] = ans[temp]!! + 1
         }
-    }
-    //println(ans)
-    //println(popularOpinion)
-    return Circle(popularOpinion, a.distance(popularOpinion))
+        var popularOpinion: Point = cMid
+        var mx = 0
+        for ((key, element) in ans) {
+            if (mx < element) {
+                mx = element
+                popularOpinion = Point(key.x / 10.0.pow(delta), key.y / 10.0.pow(delta))
+            }
+        }
+        println(ans)
+        println(popularOpinion)
+        return Circle(popularOpinion, a.distance(popularOpinion))*/
 }
 
 /**
