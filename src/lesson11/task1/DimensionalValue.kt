@@ -20,17 +20,39 @@ class DimensionalValue(value: Double, dimension: String) : Comparable<Dimensiona
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
      */
-    val value: Double get() = TODO()
+    private val prVal = value
+    private val prDim = dimension
+    val value: Double
+        get() {
+            if (prDim.length < 2) DimensionPrefix.EMPTY
+            val prefix = if (prDim.length < 2) DimensionPrefix.EMPTY else when (prDim.first()) {
+
+                'K' -> DimensionPrefix.KILO
+                'm' -> DimensionPrefix.MILLI
+                else -> DimensionPrefix.EMPTY
+
+                // если dimension соответствует нашей базовой таблицы, то не трогаем
+                // иначе переводим
+            }
+            return prVal * prefix.multiplier
+        }
 
     /**
      * БАЗОВАЯ размерность (опять-таки для 1.0Kg следует вернуть GRAM)
      */
-    val dimension: Dimension get() = TODO()
+    val dimension: Dimension
+        get() = if (prDim.last() == 'g') Dimension.GRAM else Dimension.METER
+    // если префикс на самом деле равен единице измерения, то ничего не делаем
+    // иначе dimension = какой-то из DimensionPrefix
 
     /**
      * Конструктор из строки. Формат строки: значение пробел размерность (1 Kg, 3 mm, 100 g и так далее).
      */
-    constructor(s: String) : this(TODO(), TODO())
+    constructor(s: String) : this(
+        s.substring(0, s.indexOf(" ")).toDouble(),
+        s.substring(s.indexOf(" ") + 1, s.length)
+    )
+
 
     /**
      * Сложение с другой величиной. Если базовая размерность разная, бросить IllegalArgumentException
@@ -87,5 +109,6 @@ enum class Dimension(val abbreviation: String) {
  */
 enum class DimensionPrefix(val abbreviation: String, val multiplier: Double) {
     KILO("K", 1000.0),
-    MILLI("m", 0.001);
+    MILLI("m", 0.001),
+    EMPTY("", 1.0);
 }
