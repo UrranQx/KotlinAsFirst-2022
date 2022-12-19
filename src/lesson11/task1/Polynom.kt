@@ -2,6 +2,8 @@
 
 package lesson11.task1
 
+import kotlin.math.pow
+
 /**
  * Класс "полином с вещественными коэффициентами".
  *
@@ -21,15 +23,22 @@ package lesson11.task1
  */
 class Polynom(vararg coeffs: Double) {
 
+    private val coefficients = coeffs
+    private val coeffsLen = coefficients.size
+
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
-    fun coeff(i: Int): Double = TODO()
+    fun coeff(i: Int): Double = if (i < coeffsLen) coefficients.elementAt(coeffsLen - i - 1) else 0.0
 
     /**
      * Расчёт значения при заданном x
      */
-    fun getValue(x: Double): Double = TODO()
+    fun getValue(x: Double): Double = coefficients.foldIndexed(0.0)
+    { i, previous, _ -> previous + coeff(i) * x.pow(i) }
+    /*var ans = 0.0
+    for (i in coefficients.indices) ans += coeff(i) * x.pow(i)
+    return ans*/
 
     /**
      * Степень (максимальная степень x при ненулевом слагаемом, например 2 для x^2+x+1).
@@ -38,27 +47,56 @@ class Polynom(vararg coeffs: Double) {
      * Слагаемые с нулевыми коэффициентами игнорировать, т.е.
      * степень 0x^2+0x+2 также равна 0.
      */
-    fun degree(): Int = TODO()
+    fun degree(): Int {
+        for (i in coefficients.indices) if (coefficients[i] != 0.0) return coeffsLen - i - 1
+        return 0
+    }
 
     /**
      * Сложение
      */
-    operator fun plus(other: Polynom): Polynom = TODO()
+    operator
+
+    fun plus(other: Polynom): Polynom {
+        val mx = maxOf(coeffsLen, other.coeffsLen)
+        val ans = mutableListOf<Double>()
+        for (i in mx - 1 downTo 0) ans.add(coeff(i) + other.coeff(i))
+        return Polynom(*ans.toDoubleArray())
+    }
 
     /**
      * Смена знака (при всех слагаемых)
      */
-    operator fun unaryMinus(): Polynom = TODO()
+    operator fun unaryMinus(): Polynom = Polynom(*(coefficients.map { -it }.toDoubleArray()))
 
     /**
      * Вычитание
      */
-    operator fun minus(other: Polynom): Polynom = TODO()
+    operator fun minus(other: Polynom): Polynom = this.plus(-other)
 
     /**
      * Умножение
      */
-    operator fun times(other: Polynom): Polynom = TODO()
+    operator fun times(other: Polynom): Polynom {
+        // в чем сложность? в том, что при перемножении мы с degree(i) прыгаем на degree(i+j)
+        val mx = maxOf(coeffsLen, other.coeffsLen)
+        val ans = mutableListOf<Polynom>()
+        // я могу взять первый полином, его degree -> i, возьмем значение другого полинома в degree j
+        // очевидно, что результат перемножения каждого с каждым надо куда-то записать, а в записи полинома
+        // надо сдвинуть на n (добавить n нулей в конец) n = j
+        for (j in mx - 1 downTo 0) { // выбрали коэфф второго полинома (типо начинаем со старшего xD)
+            val poly = mutableListOf<Double>()
+            for (i in mx - 1 downTo 0) { // проходимся по коэффам первого полинома
+                poly.add(coeff(i) * other.coeff(j))
+                //coeff(i) * other.coeff(j))
+            }
+            for (i in 1..j) poly.add(0.0)
+            ans.add(Polynom(*poly.toDoubleArray())) // возможно тут не стоит переводить в Polynom
+        }
+        var accumulate = Polynom(0.0)
+        for (poly in ans) accumulate += poly // Однако, это позволяет реализовать accumulate в 2 строки
+        return accumulate
+    }
 
     /**
      * Деление
