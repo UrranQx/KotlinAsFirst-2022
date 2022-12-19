@@ -102,11 +102,13 @@ class PolynomTest {
     fun polynomEquals() {
         assertEquals(Polynom(1.0, 2.0, 3.0), Polynom(1.0, 2.0, 3.0))
         assertEquals(Polynom(0.0, 2.0, 3.0), Polynom(2.0, 3.0))
+        // TODO()
     }
 
     @Test
     @Tag("6")
     fun polynomHashCode() {
         assertEquals(Polynom(1.0, 2.0, 3.0).hashCode(), Polynom(1.0, 2.0, 3.0).hashCode())
+        // TODO()
     }
 }
