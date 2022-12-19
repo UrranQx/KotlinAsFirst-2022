@@ -116,10 +116,30 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean {
+        if (other !is Polynom) return false
+        val mx = maxOf(coeffsLen, other.coeffsLen)
+        for (i in 0 until mx) if (coeff(i) != other.coeff(i)) return false // можем позволить, т.к coeff(i+mx) = 0
+        return true
+    }
 
     /**
      * Получение хеш-кода
      */
-    override fun hashCode(): Int = TODO()
+    override fun hashCode(): Int {
+        var result = coefficients[0].hashCode()
+        for (i in 1 until coeffsLen) {
+            result = 31 * result + coefficients[i].hashCode()
+        }
+        return result
+    }
 }
+
+/**
+ * override fun hashCode(): Int {
+ *         var result = a.hashCode()
+ *         result = 31 * result + b.hashCode()
+ *         result = 31 * result + c.hashCode()
+ *         return result
+ *     }
+ */
