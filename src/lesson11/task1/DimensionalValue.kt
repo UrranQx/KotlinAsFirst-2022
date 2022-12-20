@@ -2,6 +2,8 @@
 
 package lesson11.task1
 
+import java.lang.IllegalArgumentException
+
 /**
  * Класс "Величина с размерностью".
  *
@@ -24,7 +26,6 @@ class DimensionalValue(value: Double, dimension: String) : Comparable<Dimensiona
     private val prDim = dimension
     val value: Double
         get() {
-            if (prDim.length < 2) DimensionPrefix.EMPTY
             val prefix = if (prDim.length < 2) DimensionPrefix.EMPTY else when (prDim.first()) {
 
                 'K' -> DimensionPrefix.KILO
@@ -58,42 +59,65 @@ class DimensionalValue(value: Double, dimension: String) : Comparable<Dimensiona
      * Сложение с другой величиной. Если базовая размерность разная, бросить IllegalArgumentException
      * (нельзя складывать метры и килограммы)
      */
-    operator fun plus(other: DimensionalValue): DimensionalValue = TODO()
+    operator fun plus(other: DimensionalValue): DimensionalValue =
+        if (dimension != other.dimension) throw IllegalArgumentException() else {
+            //println("${this.value + other.value} ${this.dimension.abbreviation}")
+            DimensionalValue("${this.value + other.value} ${this.dimension.abbreviation}")
+        }
 
     /**
      * Смена знака величины
      */
-    operator fun unaryMinus(): DimensionalValue = TODO()
+    operator fun unaryMinus(): DimensionalValue = DimensionalValue(-value, this.dimension.abbreviation)
 
     /**
      * Вычитание другой величины. Если базовая размерность разная, бросить IllegalArgumentException
      */
-    operator fun minus(other: DimensionalValue): DimensionalValue = TODO()
+    operator fun minus(other: DimensionalValue): DimensionalValue = this + (-other)
 
     /**
      * Умножение на число
      */
-    operator fun times(other: Double): DimensionalValue = TODO()
+    operator fun times(other: Double): DimensionalValue =
+        DimensionalValue(value * other, this.dimension.abbreviation)
 
     /**
      * Деление на число
      */
-    operator fun div(other: Double): DimensionalValue = TODO()
+    operator fun div(other: Double): DimensionalValue = this * (1 / other)
 
     /**
      * Деление на другую величину. Если базовая размерность разная, бросить IllegalArgumentException
      */
-    operator fun div(other: DimensionalValue): Double = TODO()
+    operator fun div(other: DimensionalValue): Double =
+        if (dimension != other.dimension) throw IllegalArgumentException() else {
+            value / other.value
+        }
 
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean =
+        other is DimensionalValue && dimension == other.dimension && value == other.value
 
     /**
      * Сравнение на больше/меньше. Если базовая размерность разная, бросить IllegalArgumentException
      */
-    override fun compareTo(other: DimensionalValue): Int = TODO()
+    override fun compareTo(other: DimensionalValue): Int {
+        return if (dimension != other.dimension) throw IllegalArgumentException() else when {
+            value == other.value -> 0
+            value > other.value -> 1
+            else -> -1
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = prVal.hashCode()
+        result = 31 * result + prDim.hashCode()
+        result = 31 * result + value.hashCode()
+        result = 31 * result + dimension.hashCode()
+        return result
+    }
 }
 
 /**
