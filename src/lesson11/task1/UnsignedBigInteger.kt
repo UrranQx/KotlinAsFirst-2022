@@ -1,6 +1,8 @@
 package lesson11.task1
 
 import java.lang.IllegalArgumentException
+import kotlin.math.pow
+import kotlin.math.sign
 
 /**
  * Класс "беззнаковое большое целое число".
@@ -77,17 +79,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Вычитание (бросить ArithmeticException, если this < other)
      */
     operator fun minus(other: UnsignedBigInteger): UnsignedBigInteger {
-        /**
-         * как мы определим, что this < other?
-         * чек 1) -> len < other.len
-         * чек 2) на каждой итерации по числам, начиная сверять с самых больших, что просто, иначе
-         * есть другой вариант, начиная с самых маленьких -> разобьем число на две части, правую - все что
-         * до текущего числа, и левую - текущее число.
-         * Если this.current_Digit > other.current_Digit, то nextRightPart = True
-         * иначе если currentDigit == other.currentDigit nextRightPart = rightPart
-         *        иначе this.rightPart >= other.rightPart, то next
-         */
-        // а как реализовать вычитание?
+        // как реализовать вычитание?
         // опять как в школе
         // начиная с нулевого разряда вычитаем нулевой разряд другого числа:
         //
@@ -185,7 +177,26 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     /**
      * Сравнение на больше/меньше (по контракту Comparable.compareTo)
      */
-    override fun compareTo(other: UnsignedBigInteger): Int = TODO()
+    override fun compareTo(other: UnsignedBigInteger): Int {
+        /**
+         * как мы определим, что this < other ???
+         * чек 1) -> len < other.len
+         * чек 2) на каждой итерации по числам, начиная сверять с самых больших, что просто, иначе
+         * есть другой вариант, начиная с самых маленьких -> разобьем число на две части, правую - все что
+         * до текущего числа, и левую - текущее число.
+         * Если this.current_Digit > other.current_Digit, то nextRightPart = True
+         * иначе если currentDigit == other.currentDigit nextRightPart = rightPart
+         *        иначе this.rightPart >= other.rightPart, то next
+         */
+        if (len != other.len) return (len - other.len).sign
+        // иначе они равны по знакам. можно спокойно проходить реверсом
+        for (i in 0 until len) {
+            val thisDigit = value[len - 1 - i]
+            val otherDigit = other.value[len - 1 - i]
+            if (thisDigit != otherDigit) return (thisDigit - otherDigit).sign
+        }
+        return 0
+    }
 
     /**
      * Преобразование в строку
@@ -196,6 +207,11 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Преобразование в целое
      * Если число не влезает в диапазон Int, бросить ArithmeticException
      */
-    fun toInt(): Int = TODO()
+    fun toInt(): Int {
+        if (this > UnsignedBigInteger(Int.MAX_VALUE)) throw ArithmeticException()
+        var ans = 0
+        for (i in 0 until len) ans += value[i] * (10.0.pow(i)).toInt()
+        return ans
+    }
 
 }
