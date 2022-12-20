@@ -114,9 +114,56 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     }
 
     /**
+     * Умножение на digit
+     */
+    operator fun times(otherInt: Int): UnsignedBigInteger {
+        if (otherInt !in 0..9) throw IllegalArgumentException()
+        val itemsList = mutableListOf<UnsignedBigInteger>()
+        var degree = 0
+        //println("baza = $this $otherInt")
+        for (num in value) {
+            val res = UnsignedBigInteger(num * otherInt).value
+            for (i in 0 until degree) res.add(0, 0)
+            degree += 1
+            itemsList.add(UnsignedBigInteger(res))
+        }
+        var s = UnsignedBigInteger(0)
+        for (item in itemsList) s += item
+        //
+        return s
+    }
+
+    /**
+     * аналогично битовому сдвигу, только для десетичной системы счисления. Сдвиг влево, т.е умножение на 10
+     */
+
+    private fun timesBase() = value.add(0, 0)
+
+    /**
+     * аналогично битовому сдвигу, только для десетичной системы счисления. Сдвиг вправо, т.е деление на 10
+     */
+
+    private fun divBase() = value.removeAt(0)
+    // Только ли хочу ли я постоянно создавать новый список, или все же сделать фунцкию побочной?// TODO()
+    /**
      * Умножение
      */
-    operator fun times(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun times(other: UnsignedBigInteger): UnsignedBigInteger {
+        val itemsList = mutableListOf<UnsignedBigInteger>()
+        var degree = 0
+        for (otherDigit in other.value) {
+            val middleRes = this.times(otherDigit).value
+            //println("${otherDigit} * ${this} = ${middleRes.reversed()}")
+            for (i in 0 until degree) middleRes.add(0, 0)
+            //println("${middleRes.reversed()} $degree\n")
+            itemsList.add(UnsignedBigInteger(middleRes))
+            degree += 1
+        }
+        var s = UnsignedBigInteger(0)
+        for (item in itemsList) s += item
+        //
+        return s
+    }
 
     /**
      * Деление
