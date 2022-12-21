@@ -102,13 +102,18 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
             debt = if (diff < 0) 1 else 0
         }
         if (debt != 0) throw ArithmeticException()
+        var lastElementInd = ans.lastIndex
+        while (ans[lastElementInd] == 0 && lastElementInd != 0) {
+            ans.removeAt(lastElementInd)
+            lastElementInd -= 1
+        }
         return UnsignedBigInteger(ans)
     }
 
     /**
      * Умножение на digit
      */
-    operator fun times(otherInt: Int): UnsignedBigInteger {
+    private operator fun times(otherInt: Int): UnsignedBigInteger {
         if (otherInt !in 0..9) throw IllegalArgumentException()
         val itemsList = mutableListOf<UnsignedBigInteger>()
         var degree = 0
@@ -129,13 +134,13 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * аналогично битовому сдвигу, только для десетичной системы счисления. Сдвиг влево, т.е умножение на 10
      */
 
-    private fun timesBase() = value.add(0, 0)
+    //private fun timesBase() = value.add(0, 0)
 
     /**
      * аналогично битовому сдвигу, только для десетичной системы счисления. Сдвиг вправо, т.е деление на 10
      */
 
-    private fun divBase() = value.removeAt(0)
+    //private fun divBase() = value.removeAt(0)
     // Только ли хочу ли я постоянно создавать новый список, или все же сделать фунцкию побочной?// TODO()
     /**
      * Умножение
@@ -159,20 +164,72 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
 
     /**
      * Деление
+     * как бы я делил целые числа нацело, если бы умел умножать:
+     * нам как минимум надо умножать на 10^(len - other.len - 1)
+     * умножили, посчитали, получили разность // сколько еще делить? // нет овершута
+     * повторяем деление.... так будет продолжаться до тех пор,
+     * пока мы не попадем на момент YXZZZZZZZ / XZZZZZZZ или на момент YZZZZZZZ / XZZZZZZZ
+     * в таком случае, Пока "Результат умножения меньше или равен initialNumber" -> { ... ; i+1 }
+     * тогда если мы овершутнем, то выйдем из цикла while и вернем i-1 в добавок, тогда остаток -> этот овершут - denom
      */
-    operator fun div(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun div(other: UnsignedBigInteger): UnsignedBigInteger {
+        if (other == UnsignedBigInteger(0)) throw ArithmeticException("Division By Zero")
+        val ans: UnsignedBigInteger
+        if (len - other.len - 1 <= 0) {
+            var i = 0
+            var tempFactor = UnsignedBigInteger(0)
+            while (tempFactor <= this) { // начальная итерация в холостую
+                tempFactor = other * UnsignedBigInteger(i)
+                i++
+            }
+            ans = UnsignedBigInteger(i - 2) // поэтому тут -1 и -1
+        } else {
+            val tenInDegreeX = mutableListOf(1) // min degree = 0// На столько надо делить как минимум
+            for (j in 0 until len - other.len - 1) { // тут хитрый until с +-1, прошу внимательней
+                tenInDegreeX.add(0, 0)
+            }
+            val wholeTens = UnsignedBigInteger(tenInDegreeX)
+            if (this >= wholeTens * other * UnsignedBigInteger(10)) wholeTens.value.add(0, 0) // умножение на 10
+//            println("this: $this whole tens = $wholeTens\nWholeTents * other = ${wholeTens * other}")
+//            println("${this - wholeTens * other}")
+            ans = wholeTens + ((this - wholeTens * other).div(other))
+            // вся проблема алгоса тут
+        }
+        return ans
+    }
+
 
     /**
      * Взятие остатка
      */
-    operator fun rem(other: UnsignedBigInteger): UnsignedBigInteger = TODO()
+    operator fun rem(other: UnsignedBigInteger): UnsignedBigInteger = this - (this / other) * other
+
+    /**
+     * Быстрое возведение в степень (значение степени по модулю)
+     */
+    fun quickPowAbs(degree: UnsignedBigInteger): UnsignedBigInteger {
+        return when (degree) {
+            UnsignedBigInteger(0) -> UnsignedBigInteger(1)
+            UnsignedBigInteger(1) -> this
+            else -> {
+                val t = quickPowAbs(degree / UnsignedBigInteger(2))
+                if (degree % UnsignedBigInteger(2) == UnsignedBigInteger(0)) t * t
+                else this * t * t //this * quickPowAbs(degree - 1)
+            }
+        }
+
+    }
 
     /**
      * Сравнение на равенство (по контракту Any.equals)
      */
     override fun equals(other: Any?): Boolean =
         other is UnsignedBigInteger && len == other.len && (0 until len).all { value[it] == other.value[it] }
+
     // будем считать, что UnsignedBigInteger(2) != Int(2)
+    override fun hashCode(): Int {
+        return value.hashCode()
+    }
 
     /**
      * Сравнение на больше/меньше (по контракту Comparable.compareTo)
