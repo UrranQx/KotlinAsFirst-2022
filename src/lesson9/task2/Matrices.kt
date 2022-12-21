@@ -2,7 +2,9 @@
 
 package lesson9.task2
 
+import lesson9.task1.Cell
 import lesson9.task1.Matrix
+import lesson9.task1.MatrixImpl
 import lesson9.task1.createMatrix
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
@@ -60,7 +62,79 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    val matrix = MatrixImpl(height, width, Int.MIN_VALUE)
+    var fillingNumber = 1
+    val lastOne = height * width
+//    println(matrix)
+    //начинаем с горизонтальной линии вправо
+    // пока справо нет цифры > 0
+    // пока справо есть граница
+
+    // Давай разобьем задачу на подзадачу.
+    // Для начала нам надо сделать первые три ломанные
+    // Потом конечная (для этого цикла) ломанная будет идти height - k, где k -
+
+    // Move right
+    fun moveRight(startCell: Cell, endCell: Cell) {
+        if (fillingNumber > lastOne) return
+        for (j in startCell.column..endCell.column) {
+            matrix[startCell.row, j] = fillingNumber
+            /*println("Right ->")
+            println(matrix)*/
+            fillingNumber++
+            if (fillingNumber > lastOne || j + 1 > endCell.column || matrix[startCell.row, j + 1] > 0) break
+
+        }
+    }
+
+    fun moveDown(startCell: Cell, endCell: Cell) {
+        if (fillingNumber > lastOne) return
+        for (i in startCell.row..endCell.row) {
+            matrix[i, startCell.column] = fillingNumber
+            /*println("Down -")
+            println(matrix)*/
+            fillingNumber++
+            if (fillingNumber > lastOne || i + 1 > endCell.row || matrix[i + 1, startCell.column] > 0) break
+
+        }
+    }
+
+    fun moveLeft(startCell: Cell, endCell: Cell) {
+        if (fillingNumber > lastOne) return
+        for (j in startCell.column downTo endCell.column) {
+            matrix[startCell.row, j] = fillingNumber
+            /*println("<- Left")
+            println(matrix)*/
+            fillingNumber++
+            if (fillingNumber > lastOne || j - 1 < 0 || matrix[startCell.row, j - 1] > 0) break
+
+        }
+    }
+
+    fun moveUp(startCell: Cell, endCell: Cell) {
+        if (fillingNumber > lastOne) return
+        for (i in startCell.row downTo endCell.row) {
+            matrix[i, startCell.column] = fillingNumber
+            /*println("Up +")
+            println(matrix)*/
+            fillingNumber++
+            if (fillingNumber > lastOne || i - 1 < 0 || matrix[i - 1, startCell.column] > 0) break
+
+        }
+    }
+
+    var k = 0
+    while (fillingNumber <= lastOne) {
+        moveRight(Cell(0 + k, 0 + k), Cell(0 + k, width - 1 - k))
+        moveDown(Cell(k + 1, width - 1 - k), Cell(height - 1 - k, width - 1 - k))
+        moveLeft(Cell(height - 1 - k, width - 1 - 1 - k), Cell(height - 1 - k, 0 + k))
+        moveUp(Cell(height - 1 - 1 - k, 0 + k), Cell(0 + 1 + k, 0 + k))
+        k++
+    }
+    //println(matrix)
+    return matrix
+}
 
 /**
  * Сложная (5 баллов)
