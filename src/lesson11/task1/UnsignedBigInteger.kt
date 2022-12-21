@@ -26,8 +26,13 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      * Конструктор из строки
      */
     constructor(s: String) {
-        for (char in s.reversed()) value.add(char.digitToIntOrNull() ?: throw IllegalArgumentException())
+        var fl = false // флаг, для распознования прошли ли мы все незначащие нули или нет
+        for (i in s.indices) {
+            if (!fl) if (s[i] != '0') fl = true else continue
+            value.add(0, s[i].digitToIntOrNull() ?: throw IllegalArgumentException())
+        }
     }
+
 
     /**
      * Конструктор из целого
@@ -141,7 +146,7 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
      */
 
     //private fun divBase() = value.removeAt(0)
-    // Только ли хочу ли я постоянно создавать новый список, или все же сделать фунцкию побочной?// TODO()
+    // Только ли хочу ли я постоянно создавать новый список, или все же сделать функцию побочной?// TODO()
     /**
      * Умножение
      */
@@ -207,14 +212,27 @@ class UnsignedBigInteger : Comparable<UnsignedBigInteger> {
     /**
      * Быстрое возведение в степень (значение степени по модулю)
      */
-    fun quickPowAbs(degree: UnsignedBigInteger): UnsignedBigInteger {
+    fun quickPow(degree: Int): UnsignedBigInteger {
+        return when (degree) {
+            0 -> UnsignedBigInteger(1)
+            1 -> this
+            else -> {
+                val t = quickPow(degree / 2)
+                if (degree % 2 == 0) t * t
+                else this * t * t //this * quickPowAbs(degree - 1)
+            }
+        }
+
+    }
+
+    fun quickPow(degree: UnsignedBigInteger): UnsignedBigInteger {
         return when (degree) {
             UnsignedBigInteger(0) -> UnsignedBigInteger(1)
             UnsignedBigInteger(1) -> this
             else -> {
-                val t = quickPowAbs(degree / UnsignedBigInteger(2))
+                val t = quickPow(degree / UnsignedBigInteger(2))
                 if (degree % UnsignedBigInteger(2) == UnsignedBigInteger(0)) t * t
-                else this * t * t //this * quickPowAbs(degree - 1)
+                else this * t * t //this * quickPow(degree - 1)
             }
         }
 
