@@ -88,7 +88,7 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 // Добавить второй алгос
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
-    val ans = mutableMapOf<String, Int>()
+    /*val ans = mutableMapOf<String, Int>()
     val strings = substrings.toSet()
     // Алгос 1. Тупой перебор
     // Мы проходимся по каждому [Даже не слову, а надо пройтись по каждому чару]  в тексте, и
@@ -102,8 +102,38 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         }
         if (ans[string] == null) ans[string] = 0 //1
     }
-    return ans// m * (n -l + const) * (l + const) как минимум
+    return ans// m * (n -l + const) * (l + const) как минимум*/
+    val ans = mutableMapOf<String, Int>()
+    val strings = substrings.toSet()
+    //println(strings)
+    /*  fun charsIndex(index: Int): Set<Char> {
+          // надо достать все чары с таким индексом
+          val temp = mutableSetOf<Char>()
+          for (str in strings) {
+              if (index < str.length) temp.add(str[index])
+          }
+          return temp
+      }*/
+    //println(strings)
+    //println(startChars)
+    File(inputName).useLines { sequence ->
+        sequence.forEach { it ->
+            val line = it.lowercase()
+            for (string in strings) { //m - кол-во подстрок
+                val stringLowercased = string.lowercase()
+                var startPos = line.indexOf(stringLowercased, 0)
+                while (-1 < startPos && startPos < line.length - string.length + 1) {
+                    ans[string] = 1 + (ans[string] ?: 0) // 1
+                    startPos = line.indexOf(stringLowercased, startPos + 1)
+                }
+                if (ans[string] == null) ans[string] = 0 //1
+            }
+
+        }
+    }
+    return ans
 }
+
 //другой алгос
 // мы считываем чар, если с такого начинается any подстрока, то включается второй итератор,
 // который бежит дальше по чарам и если (a: файл закончился или
