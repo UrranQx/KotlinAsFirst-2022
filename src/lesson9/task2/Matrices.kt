@@ -6,6 +6,7 @@ import lesson9.task1.Cell
 import lesson9.task1.Matrix
 import lesson9.task1.MatrixImpl
 import lesson9.task1.createMatrix
+import java.lang.IllegalArgumentException
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -150,7 +151,17 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    for (i in 0 until height) {
+        for (j in 0 until width) {
+            val k1 = minOf(i, height - i - 1) + 1
+            val k2 = minOf(j, width - j - 1) + 1
+            matrix[i, j] = minOf(k1, k2)
+        }
+    }
+    return matrix
+}
 
 /**
  * Сложная (5 баллов)
@@ -165,7 +176,23 @@ fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
  * 10 13 16 18
  * 14 17 19 20
  */
-fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSnake(height: Int, width: Int): Matrix<Int> {
+    TODO()/*
+    val matrix = MatrixImpl(height, width, 0)
+    val leftBorder = width
+    var num = 1
+    for (w in 0 until width) {
+        for (i in 0 until w + 1) {
+            matrix[i, w - i] = num
+            num++
+
+        }
+    }
+    num = height * width
+
+    println(matrix)
+    return matrix*/
+}
 
 /**
  * Средняя (3 балла)
@@ -178,7 +205,16 @@ fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
  * 4 5 6      8 5 2
  * 7 8 9      9 6 3
  */
-fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
+fun <E> rotate(matrix: Matrix<E>): Matrix<E> {
+    if (matrix.width != matrix.height) throw IllegalArgumentException()
+    val ansMtx = createMatrix(matrix.height, matrix.width, matrix[0, 0])
+    for (i in 0 until matrix.height) {
+        for (j in 0 until matrix.width) {
+            ansMtx[j, matrix.height - i - 1] = matrix[i, j]
+        }
+    }
+    return ansMtx
+}
 
 /**
  * Сложная (5 баллов)
@@ -193,7 +229,31 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.width != matrix.height) return false
+    // rows check
+    val equvivalentSet = (1..matrix.height).toSet()
+    //println(equvivalentSet)
+    for (i in 0 until matrix.height) {
+        val rowSet = mutableSetOf<Int>()
+        for (j in 0 until matrix.width) {
+            val element = matrix[i, j]
+            if (element in rowSet || element !in equvivalentSet) return false
+            rowSet.add(element)
+
+        }
+    }
+    for (j in 0 until matrix.width) {
+        val columnSet = mutableSetOf<Int>()
+        for (i in 0 until matrix.height) {
+            val element = matrix[i, j]
+            if (element in columnSet || element !in equvivalentSet) return false
+            columnSet.add(element)
+
+        }
+    }
+    return true
+}
 
 /**
  * Средняя (3 балла)

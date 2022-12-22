@@ -104,8 +104,11 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
      */
     override fun toString(): String {
         val sb = StringBuilder()
-        for (i in 0 until height)
-            sb.append(list.slice(i * width until i * width + width)).append("\n")
+        val t = list.maxOf { it.toString().length } -1
+        for (i in 0 until height) {
+            for (j in i * width until i * width + width) sb.append(list[j]).append("\t".repeat(t))
+            sb.append("\n")
+        }
         return sb.toString()
     }
 
